@@ -13,7 +13,7 @@ fun Route.homeTypeRouting() {
             call.respond(homeTypeService.getHomeTypes())
         }
 
-        get("/getHomeTypeById/{id}") {
+        get("/{id}") {
             val id = call.parameters["id"]?.toLongOrNull()!!
             call.respond(homeTypeService.getHomeTypeById(id))
         }

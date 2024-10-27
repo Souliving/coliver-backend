@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class HomeTypeDAOImpl : HomeTypeDao {
+class HomeTypeDAOImpl : HomeTypeDAO {
 
     private fun resultRowToHomeType(row: ResultRow) = HomeType(
         id = row[HomeTypes.id],
