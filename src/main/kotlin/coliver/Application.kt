@@ -8,13 +8,12 @@ import coliver.dao.home_type.HomeTypeDAO
 import coliver.dao.home_type.HomeTypeDAOImpl
 import coliver.dao.metro.MetroDAO
 import coliver.dao.metro.MetroDAOImpl
+import coliver.dao.property.PropertyDAO
+import coliver.dao.property.PropertyDAOImpl
 import coliver.plugins.configureDatabases
 import coliver.plugins.configureRouting
 import coliver.plugins.configureSerialization
-import coliver.services.CityService
-import coliver.services.HomeOwnerService
-import coliver.services.HomeTypeService
-import coliver.services.MetroService
+import coliver.services.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
@@ -43,9 +42,22 @@ val homeOwnerModule = module {
     single { HomeOwnerService(get()) }
 }
 
+val propertyModule = module {
+    single<PropertyDAO> { PropertyDAOImpl() }
+    single { PropertyService(get()) }
+}
+
 fun Application.module() {
     install(Koin) {
-        modules(listOf(metroModule, cityModule, homeTypeModule, homeOwnerModule))
+        modules(
+            listOf(
+                metroModule,
+                cityModule,
+                homeTypeModule,
+                homeOwnerModule,
+                propertyModule
+            )
+        )
     }
     install(CORS) {
         anyHost()

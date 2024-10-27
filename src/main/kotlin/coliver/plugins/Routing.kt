@@ -1,9 +1,6 @@
 package coliver.plugins
 
-import coliver.routing.api.v1.cityRouting
-import coliver.routing.api.v1.homeOwnerRouting
-import coliver.routing.api.v1.homeTypeRouting
-import coliver.routing.api.v1.metroRouting
+import coliver.routing.api.v1.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.swagger.*
@@ -25,6 +22,7 @@ fun Application.configureRouting() {
             cityRouting()
             homeTypeRouting()
             homeOwnerRouting()
+            propertyRouting()
         }
     }
 }
