@@ -1,5 +1,6 @@
 package coliver.plugins
 
+import coliver.routing.api.v1.cityRouting
 import coliver.routing.api.v1.metroRouting
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -19,6 +20,7 @@ fun Application.configureRouting() {
         }
         route("api/v1") {
             metroRouting()
+            cityRouting()
         }
     }
 }

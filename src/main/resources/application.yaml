@@ -1,15 +1,15 @@
 ktor:
     deployment:
-        port: 8080
-        callGroupSize: 4
-        connectionGroupSize: 3
-        workerGroupSize: 3
+        port: 8085
+        callGroupSize: 8
+        connectionGroupSize: 4
+        workerGroupSize: 4
     application:
         modules:
             - coliver.ApplicationKt.module
 
 
-#storage:
-#    user: $USER
-#    password: $PASSWORD
-#    jdbcURL: $JDBC_URL
+storage:
+    user: $USER
+    password: $PASSWORD
+    jdbcURL: $JDBC_URL

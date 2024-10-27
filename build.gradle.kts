@@ -39,11 +39,11 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.postgresql:postgresql:42.7.2")
-    implementation("com.zaxxer:HikariCP:3.4.2")
+    implementation("com.zaxxer:HikariCP:6.0.0")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    // https://mvnrepository.com/artifact/io.ktor/ktor-server-config-yaml-jvm
     implementation("io.ktor:ktor-server-config-yaml-jvm:3.0.0")
+    implementation("io.insert-koin:koin-ktor:4.0.0")
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

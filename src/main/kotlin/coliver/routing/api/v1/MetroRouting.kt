@@ -1,14 +1,33 @@
 package coliver.routing.api.v1
 
-import coliver.dao.metro.metroDao
+import coliver.services.MetroService
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 
 fun Route.metroRouting() {
+    val metroService by application.inject<MetroService>()
+
     route("/metro") {
+
         get {
-            call.respond(metroDao.getAll())
+            call.respond(metroService.all())
+        }
+
+        get("/{metroId}") {
+            val metroId = call.parameters["metroId"]!!.toLong()
+            call.respond(metroService.getMetroById(metroId))
+        }
+
+        get("/getAllMetroByCityId/{cityId}") {
+            val cityId = call.parameters["cityId"]!!.toLong()
+            call.respond(metroService.getMetroByCityId(cityId))
+        }
+
+        get("/getMetroByName/{name}") {
+            val metroName = call.parameters["name"]!!
+            call.respond(metroService.getMetroByName(metroName))
         }
     }
 }
