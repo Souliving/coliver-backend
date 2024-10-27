@@ -2,12 +2,15 @@ package coliver
 
 import coliver.dao.city.CityDAO
 import coliver.dao.city.CityDAOImpl
+import coliver.dao.home_type.HomeTypeDAOImpl
+import coliver.dao.home_type.HomeTypeDao
 import coliver.dao.metro.MetroDAO
 import coliver.dao.metro.MetroDAOImpl
 import coliver.plugins.configureDatabases
 import coliver.plugins.configureRouting
 import coliver.plugins.configureSerialization
 import coliver.services.CityService
+import coliver.services.HomeTypeService
 import coliver.services.MetroService
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -27,9 +30,14 @@ val cityModule = module {
     single { CityService(get()) }
 }
 
+val homeTypeModule = module {
+    single<HomeTypeDao> { HomeTypeDAOImpl() }
+    single { HomeTypeService(get()) }
+}
+
 fun Application.module() {
     install(Koin) {
-        modules(listOf(metroModule, cityModule))
+        modules(listOf(metroModule, cityModule, homeTypeModule))
     }
     install(CORS) {
         anyHost()
