@@ -5,7 +5,6 @@ import coliver.model.Cities
 import coliver.model.City
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class CityDAOImpl : CityDAO {
 
@@ -15,8 +14,6 @@ class CityDAOImpl : CityDAO {
     )
 
     override suspend fun getAll(): List<City> = dbQuery {
-        transaction {
-            Cities.selectAll().map(::resultRowToCity)
-        }
+        Cities.selectAll().map(::resultRowToCity)
     }
 }

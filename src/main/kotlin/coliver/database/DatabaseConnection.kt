@@ -25,6 +25,7 @@ object DatabaseFactory {
             jdbcUrl = databaseParams.url
             username = databaseParams.user
             password = databaseParams.password
+            maximumPoolSize = 3
         }
         val ds = HikariDataSource(config)
         Database.connect(ds)

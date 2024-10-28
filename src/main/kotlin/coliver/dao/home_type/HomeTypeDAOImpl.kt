@@ -6,7 +6,6 @@ import coliver.model.HomeTypes
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class HomeTypeDAOImpl : HomeTypeDAO {
 
@@ -16,17 +15,13 @@ class HomeTypeDAOImpl : HomeTypeDAO {
     )
 
     override suspend fun getAll(): List<HomeType> = dbQuery {
-        transaction {
-            HomeTypes.selectAll().map(::resultRowToHomeType)
-        }
+        HomeTypes.selectAll().map(::resultRowToHomeType)
     }
 
     override suspend fun getById(id: Long): HomeType = dbQuery {
-        transaction {
-            HomeTypes.selectAll()
-                .where(HomeTypes.id.eq(id))
-                .map(::resultRowToHomeType)
-                .first()
-        }
+        HomeTypes.selectAll()
+            .where(HomeTypes.id.eq(id))
+            .map(::resultRowToHomeType)
+            .first()
     }
 }

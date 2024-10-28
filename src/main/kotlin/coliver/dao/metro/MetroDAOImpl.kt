@@ -3,11 +3,9 @@ package coliver.dao.metro
 import coliver.database.DatabaseFactory.dbQuery
 import coliver.model.Metro
 import coliver.model.Metros
-
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class MetroDAOImpl : MetroDAO {
 
@@ -18,26 +16,18 @@ class MetroDAOImpl : MetroDAO {
     )
 
     override suspend fun getAll(): List<Metro> = dbQuery {
-        transaction {
-            Metros.selectAll().map(::resultRowToMetro)
-        }
+        Metros.selectAll().map(::resultRowToMetro)
     }
 
     override suspend fun getMetro(metroId: Long): Metro = dbQuery {
-        transaction {
-            Metros.selectAll().where(Metros.id.eq(metroId)).map(::resultRowToMetro).single()
-        }
+        Metros.selectAll().where(Metros.id.eq(metroId)).map(::resultRowToMetro).single()
     }
 
     override suspend fun getMetroByCityId(cityId: Long): List<Metro> = dbQuery {
-        transaction {
-            Metros.selectAll().where(Metros.cityId.eq(cityId)).map(::resultRowToMetro)
-        }
+        Metros.selectAll().where(Metros.cityId.eq(cityId)).map(::resultRowToMetro)
     }
 
     override suspend fun getMetroByName(metroName: String): Metro = dbQuery {
-        transaction {
-            Metros.selectAll().where(Metros.name.eq(metroName)).map(::resultRowToMetro).single()
-        }
+        Metros.selectAll().where(Metros.name.eq(metroName)).map(::resultRowToMetro).single()
     }
 }

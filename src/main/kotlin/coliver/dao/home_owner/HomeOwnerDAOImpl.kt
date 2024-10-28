@@ -6,7 +6,6 @@ import coliver.model.HomeOwners
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class HomeOwnerDAOImpl : HomeOwnerDAO {
 
@@ -20,21 +19,15 @@ class HomeOwnerDAOImpl : HomeOwnerDAO {
     )
 
     override suspend fun getAll(): List<HomeOwner> = dbQuery {
-        transaction {
-            HomeOwners.selectAll().map(::resultRowToHomeOwner)
-        }
+        HomeOwners.selectAll().map(::resultRowToHomeOwner)
     }
 
     override suspend fun getById(id: Long): HomeOwner? = dbQuery {
-        transaction {
-            HomeOwners.selectAll().where(HomeOwners.id.eq(id)).map(::resultRowToHomeOwner).singleOrNull()
-        }
+        HomeOwners.selectAll().where(HomeOwners.id.eq(id)).map(::resultRowToHomeOwner).singleOrNull()
     }
 
     override suspend fun getByHomeTypeId(id: Long): List<HomeOwner> = dbQuery {
-        transaction {
-            HomeOwners.selectAll().where(HomeOwners.homeTypeId.eq(id)).map(::resultRowToHomeOwner)
-        }
+        HomeOwners.selectAll().where(HomeOwners.homeTypeId.eq(id)).map(::resultRowToHomeOwner)
     }
 
     override suspend fun insert(homeOwner: HomeOwner) {

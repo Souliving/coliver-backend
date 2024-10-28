@@ -6,7 +6,6 @@ import coliver.model.Property
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class PropertyDAOImpl : PropertyDAO {
 
@@ -20,11 +19,9 @@ class PropertyDAOImpl : PropertyDAO {
     )
 
     override suspend fun getById(id: Long): Property = dbQuery {
-        transaction {
-            Properties.selectAll()
-                .where(Properties.id.eq(id))
-                .map(::resultRowToProperty)
-                .single()
-        }
+        Properties.selectAll()
+            .where(Properties.id.eq(id))
+            .map(::resultRowToProperty)
+            .single()
     }
 }
