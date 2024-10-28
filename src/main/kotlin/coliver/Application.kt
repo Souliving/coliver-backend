@@ -67,3 +67,15 @@ fun Application.module() {
     configureDatabases()
     configureRouting()
 }
+
+
+/*
+* val client = HttpClient(Apache5) {
+    engine {
+    }
+    install(ContentNegotiation) {
+        json()
+    }
+}
+val metro: List<Metro> = client.get("https://api.coliver.tech/api/v1/metro/").body()
+* */
