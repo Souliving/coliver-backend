@@ -1,18 +1,23 @@
 package coliver.routing.api.v1
 
 import coliver.services.MetroService
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
-
+val client = HttpClient(CIO)
 fun Route.metroRouting() {
     val metroService by application.inject<MetroService>()
 
     route("/metro") {
 
         get {
-            call.respond(metroService.all())
+            call.respondText(client.get("https://images.coliver.tech/getImageById/1").body())
+//            call.respond(metroService.all())
         }
 
         get("/{metroId}") {
