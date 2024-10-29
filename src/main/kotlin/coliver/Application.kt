@@ -10,6 +10,8 @@ import coliver.dao.metro.MetroDAO
 import coliver.dao.metro.MetroDAOImpl
 import coliver.dao.property.PropertyDAO
 import coliver.dao.property.PropertyDAOImpl
+import coliver.dao.users.UserDAO
+import coliver.dao.users.UserDAOImpl
 import coliver.plugins.configureDatabases
 import coliver.plugins.configureRouting
 import coliver.plugins.configureSerialization
@@ -47,6 +49,11 @@ val propertyModule = module {
     single { PropertyService(get()) }
 }
 
+val userModule = module {
+    single<UserDAO> { UserDAOImpl() }
+    single { UserService(get()) }
+}
+
 fun Application.module() {
     install(Koin) {
         modules(
@@ -55,7 +62,8 @@ fun Application.module() {
                 cityModule,
                 homeTypeModule,
                 homeOwnerModule,
-                propertyModule
+                propertyModule,
+                userModule
             )
         )
     }

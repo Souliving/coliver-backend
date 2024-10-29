@@ -23,6 +23,7 @@ fun Application.configureRouting() {
             homeTypeRouting()
             homeOwnerRouting()
             propertyRouting()
+            userRouting()
         }
     }
 }

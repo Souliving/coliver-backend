@@ -1,9 +1,9 @@
 ktor:
     deployment:
         port: 8085
-        callGroupSize: 8
         connectionGroupSize: 4
         workerGroupSize: 4
+        callGroupSize: 8
     application:
         modules:
             - coliver.ApplicationKt.module

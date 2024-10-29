@@ -38,6 +38,7 @@ dependencies {
     implementation("io.ktor:ktor-server-cors:$ktor_version")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
     implementation("org.postgresql:postgresql:42.7.2")
     implementation("com.zaxxer:HikariCP:6.0.0")
     implementation("io.ktor:ktor-server-netty-jvm")
@@ -51,6 +52,7 @@ dependencies {
     implementation("io.ktor:ktor-client-apache5:3.0.0")
     implementation("io.ktor:ktor-client-okhttp-jvm:3.0.0")
     implementation("io.ktor:ktor-client-cio-jvm:3.0.0")
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
