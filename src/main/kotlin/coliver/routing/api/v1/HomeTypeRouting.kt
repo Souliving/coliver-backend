@@ -1,6 +1,7 @@
 package coliver.routing.api.v1
 
 import coliver.services.HomeTypeService
+import io.github.smiley4.ktorswaggerui.dsl.routing.route
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -8,7 +9,9 @@ import org.koin.ktor.ext.inject
 fun Route.homeTypeRouting() {
     val homeTypeService by application.inject<HomeTypeService>()
 
-    route("/homeType") {
+    route("/homeType", {
+        tags("homeType")
+    }) {
         get("/") {
             call.respond(homeTypeService.getHomeTypes())
         }
