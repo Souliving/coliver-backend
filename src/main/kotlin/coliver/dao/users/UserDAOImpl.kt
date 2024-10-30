@@ -50,16 +50,6 @@ class UserDAOImpl : UserDAO {
         }
     }
 
-    private fun <T : Any> String.execAndMap(transform: (ResultSet) -> T): List<T> {
-        val result = arrayListOf<T>()
-        TransactionManager.current().exec(this) { rs ->
-            while (rs.next()) {
-                result += transform(rs)
-            }
-        }
-        return result
-    }
-
     override suspend fun getLkById(id: Long): LkInfoDto = transaction {
         val procedure = "select * from get_lk_info_for_user_id($id)"
         val lkInfoDto = LkInfoDto(0, "", listOf())
@@ -70,6 +60,16 @@ class UserDAOImpl : UserDAO {
         }
         lkInfoDto
     }
+}
+
+private fun <T : Any> String.execAndMap(transform: (ResultSet) -> T): List<T> {
+    val result = arrayListOf<T>()
+    TransactionManager.current().exec(this) { rs ->
+        while (rs.next()) {
+            result += transform(rs)
+        }
+    }
+    return result
 }
 
 private fun Array.toList(): List<String> {
