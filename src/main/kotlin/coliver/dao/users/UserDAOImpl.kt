@@ -2,14 +2,19 @@ package coliver.dao.users
 
 import coliver.database.DatabaseFactory.dbQuery
 import coliver.dto.FillUserDto
+import coliver.dto.LkInfoDto
 import coliver.model.Gender
 import coliver.model.User
 import coliver.model.UserRole
 import coliver.model.Users
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
+import java.sql.Array
+import java.sql.ResultSet
+
 
 class UserDAOImpl : UserDAO {
 
@@ -44,4 +49,36 @@ class UserDAOImpl : UserDAO {
             }
         }
     }
+
+    private fun <T : Any> String.execAndMap(transform: (ResultSet) -> T): List<T> {
+        val result = arrayListOf<T>()
+        TransactionManager.current().exec(this) { rs ->
+            while (rs.next()) {
+                result += transform(rs)
+            }
+        }
+        return result
+    }
+
+    override suspend fun getLkById(id: Long): LkInfoDto = transaction {
+        val procedure = "select * from get_lk_info_for_user_id($id)"
+        val lkInfoDto = LkInfoDto(0, "", listOf())
+        procedure.execAndMap { rs ->
+            lkInfoDto.formId = rs.getLong("formId")
+            lkInfoDto.cityName = rs.getString("cityName")
+            lkInfoDto.metroNames = rs.getArray("metroNames").toList()
+        }
+        lkInfoDto
+    }
+}
+
+private fun Array.toList(): List<String> {
+    var list = listOf<String>()
+    listOf(this).forEach { arrayElement ->
+        val tmp = arrayElement.toString().replace("[", "")
+            .replace("]", "")
+            .replace("\"", "")
+        list = tmp.split(", ")
+    }
+    return list
 }

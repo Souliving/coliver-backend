@@ -9,6 +9,7 @@ import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.routing.get
 import org.koin.ktor.ext.inject
 
 fun Route.userRouting() {
@@ -36,13 +37,20 @@ fun Route.userRouting() {
             request {
                 queryParameter<Long>("id")
                 body<FillUserDto> {
-
                 }
             }
         }) {
             val id = call.parameters["id"]!!.toLong()
             val dto = call.receive<FillUserDto>()
             call.respond(HttpStatusCode.OK, userService.fillUser(id, dto))
+        }
+        get("/lkByUserId/{id}", {
+            request {
+                queryParameter<Long>("id")
+            }
+        }) {
+            val id = call.parameters["id"]!!.toLong()
+            call.respond(userService.getLkById(id))
         }
     }
 }
