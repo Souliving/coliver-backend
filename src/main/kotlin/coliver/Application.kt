@@ -14,6 +14,10 @@ fun Application.module() {
     install(CORS) {
         anyHost()
         allowHeader(HttpHeaders.ContentType)
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Patch)
+        allowMethod(HttpMethod.Delete)
     }
     configureSerialization()
     configureDatabases()

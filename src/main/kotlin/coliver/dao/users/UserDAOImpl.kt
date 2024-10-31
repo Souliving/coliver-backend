@@ -7,13 +7,12 @@ import coliver.model.Gender
 import coliver.model.User
 import coliver.model.UserRole
 import coliver.model.Users
+import coliver.utils.execAndMap
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.sql.Array
-import java.sql.ResultSet
 
 
 class UserDAOImpl : UserDAO {
@@ -60,16 +59,6 @@ class UserDAOImpl : UserDAO {
         }
         lkInfoDto
     }
-}
-
-private fun <T : Any> String.execAndMap(transform: (ResultSet) -> T): List<T> {
-    val result = arrayListOf<T>()
-    TransactionManager.current().exec(this) { rs ->
-        while (rs.next()) {
-            result += transform(rs)
-        }
-    }
-    return result
 }
 
 private fun Array.toList(): List<String> {

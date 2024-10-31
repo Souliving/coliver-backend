@@ -40,6 +40,9 @@ fun Application.configureRouting() {
             homeOwnerRouting()
             propertyRouting()
             userRouting()
+            formRouting()
+            shortFormRouting()
+            favFormRouting()
         }
     }
 }

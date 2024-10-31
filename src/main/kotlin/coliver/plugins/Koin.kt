@@ -2,6 +2,12 @@ package coliver.plugins
 
 import coliver.dao.city.CityDAO
 import coliver.dao.city.CityDAOImpl
+import coliver.dao.form.FavFormDAO
+import coliver.dao.form.FormDAO
+import coliver.dao.form.ShortFormDAO
+import coliver.dao.form.impl.FavFormDAOImpl
+import coliver.dao.form.impl.FormDAOImpl
+import coliver.dao.form.impl.ShortFormDAOImpl
 import coliver.dao.home_owner.HomeOwnerDAO
 import coliver.dao.home_owner.HomeOwnerDAOImpl
 import coliver.dao.home_type.HomeTypeDAO
@@ -47,6 +53,21 @@ val userModule = module {
     single { UserService(get()) }
 }
 
+val formModule = module {
+    single<FormDAO> { FormDAOImpl() }
+    single { FormService(get()) }
+}
+
+val shortFormModule = module {
+    single<ShortFormDAO> { ShortFormDAOImpl() }
+    single<ShortFormService> { ShortFormService(get()) }
+}
+
+val favFormModule = module {
+    single<FavFormDAO> { FavFormDAOImpl() }
+    single<FavFormService> { FavFormService(get()) }
+}
+
 fun Application.configureKoin() {
     install(Koin) {
         modules(
@@ -56,7 +77,10 @@ fun Application.configureKoin() {
                 homeTypeModule,
                 homeOwnerModule,
                 propertyModule,
-                userModule
+                userModule,
+                formModule,
+                shortFormModule,
+                favFormModule
             )
         )
     }

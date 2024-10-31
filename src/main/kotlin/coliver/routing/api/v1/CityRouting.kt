@@ -14,7 +14,7 @@ fun Route.cityRouting() {
         tags("cities")
     }) {
 
-        get {
+        get("/") {
             call.respond(cityService.getAll())
         }
 

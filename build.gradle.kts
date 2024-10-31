@@ -53,6 +53,7 @@ dependencies {
     implementation("io.ktor:ktor-client-okhttp-jvm:3.0.0")
     implementation("io.ktor:ktor-client-cio-jvm:3.0.0")
     implementation("io.github.smiley4:ktor-swagger-ui:4.0.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
