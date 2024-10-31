@@ -14,6 +14,30 @@ import java.sql.ResultSet
 
 class ShortFormDAOImpl : ShortFormDAO {
 
+    private fun ResultSet.resultRowToShortForm(): ShortFormDto = ShortFormDto(
+        id = this.getLong("id"),
+        name = this.getString("name"),
+        age = this.getInt("age"),
+        city = City(
+            this.getLong("cityId"),
+            this.getString("cityName")
+        ),
+        metro = Json.decodeFromString(this.getString("metro")),
+        budget = this.getLong("budget"),
+        description = this.getString("description"),
+        dateMove = this.getTimestamp("dateMove").toLocalDateTime().toKotlinLocalDateTime(),
+        properties = Property(
+            this.getLong("propertiesId"),
+            this.getBoolean("smoking"),
+            this.getBoolean("alcohol"),
+            this.getBoolean("petFriendly"),
+            this.getBoolean("isClean"),
+            this.getLong("homeOwnerId")
+        ),
+        photoId = this.getLong("photoId"),
+        onlineDateTime = this.getTimestamp("onlineDateTime").toLocalDateTime().toKotlinLocalDateTime()
+    )
+
     override suspend fun getAll(): List<ShortFormDto> = transaction {
         val sql = "select * from get_short_forms()"
         getShortFormsWithSQL(sql)
@@ -26,12 +50,12 @@ class ShortFormDAOImpl : ShortFormDAO {
 
     override suspend fun getForUser(userId: Long): List<ShortFormDto> = transaction {
         val sql = "select * from get_short_forms_for_user_id($userId)"
-        getShortFormsWithSQL(sql)
+        getShortFormsPersonalizedWithSQL(sql)
     }
 
     override suspend fun getWithFilter(userId: Long, filter: FilterDto): List<ShortFormDto> = transaction {
         val sql = buildFilterRequest(userId, filter)
-        getShortFormsWithSQL(sql)
+        getShortFormsPersonalizedWithSQL(sql)
     }
 
     private fun getShortFormsWithSQL(sql: String): MutableList<ShortFormDto> {
@@ -42,9 +66,17 @@ class ShortFormDAOImpl : ShortFormDAO {
         return result
     }
 
+    private fun getShortFormsPersonalizedWithSQL(sql: String): MutableList<ShortFormDto> {
+        val result = mutableListOf<ShortFormDto>()
+        sql.execAndMap { rs ->
+            result.add(rs.resultRowToShortFormPersonalized())
+        }
+        return result
+    }
+
 }
 
-fun ResultSet.resultRowToShortForm(): ShortFormDto = ShortFormDto(
+fun ResultSet.resultRowToShortFormPersonalized(): ShortFormDto = ShortFormDto(
     id = this.getLong("id"),
     name = this.getString("name"),
     age = this.getInt("age"),

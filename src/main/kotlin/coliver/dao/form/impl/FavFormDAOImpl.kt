@@ -26,7 +26,7 @@ class FavFormDAOImpl : FavFormDAO {
     private fun getShortFormsWithSQL(sql: String): MutableList<ShortFormDto> {
         val result = mutableListOf<ShortFormDto>()
         sql.execAndMap { rs ->
-            result.add(rs.resultRowToShortForm())
+            result.add(rs.resultRowToShortFormPersonalized())
         }
         return result
     }
