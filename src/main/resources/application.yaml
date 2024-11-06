@@ -10,6 +10,13 @@ ktor:
 
 
 storage:
-    user: $USER
-    password: $PASSWORD
-    jdbcURL: $JDBC_URL
+    user: "postgres"
+    password: "B7Q4zAjtiadRyT"
+    jdbcURL: "jdbc:postgresql://94.103.89.23:5432/coliver"
+
+
+jwt:
+    secret: "secret"
+    issuer: "coliver.tech"
+    audience: "user"
+    realm:  "Access to 'page'"

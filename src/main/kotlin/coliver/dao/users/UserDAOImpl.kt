@@ -1,6 +1,7 @@
 package coliver.dao.users
 
 import coliver.database.DatabaseFactory.dbQuery
+import coliver.dto.CreateUserDto
 import coliver.dto.FillUserDto
 import coliver.dto.LkInfoDto
 import coliver.model.Gender
@@ -8,11 +9,15 @@ import coliver.model.User
 import coliver.model.UserRole
 import coliver.model.Users
 import coliver.utils.execAndMap
+import kotlinx.datetime.toKotlinLocalDateTime
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.sql.Array
+import java.time.LocalDateTime
 
 
 class UserDAOImpl : UserDAO {
@@ -59,6 +64,26 @@ class UserDAOImpl : UserDAO {
         }
         lkInfoDto
     }
+
+    override suspend fun getByEmail(email: String): User? = dbQuery {
+        Users.selectAll().where(Users.email.eq(email)).map(::resultRowToUser).singleOrNull()
+    }
+
+    override suspend fun createUser(dto: CreateUserDto): Long? = transaction {
+        val userInsert = Users.insert {
+            it[email] = dto.email
+            it[password] = dto.password
+            it[name] = dto.name
+            it[age] = dto.age
+            it[gender] = dto.gender.toString()
+            it[role] = UserRole.USER.toString()
+            it[createDate] = LocalDateTime.now().toKotlinLocalDateTime()
+            it[modifyDate] = LocalDateTime.now().toKotlinLocalDateTime()
+        }
+        userInsert.resultedValues?.singleOrNull()?.let { resultRowToUser(it).id }
+
+    }
+
 }
 
 private fun Array.toList(): List<String> {
