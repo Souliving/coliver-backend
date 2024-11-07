@@ -1,7 +1,9 @@
 package coliver.dao.form.impl
 
 import coliver.dao.form.FavFormDAO
+import coliver.database.DatabaseFactory.dbQuery
 import coliver.dto.form.ShortFormDto
+import coliver.utils.exec
 import coliver.utils.execAndMap
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -21,6 +23,14 @@ class FavFormDAOImpl : FavFormDAO {
         val sql = "DELETE FROM favorite_forms WHERE user_id = $userId and fav_form_id = $favFormId"
         sql.execAndMap { }
         return@transaction
+    }
+
+    override suspend fun deleteForForm(formId: Long) = dbQuery {
+        transaction {
+            val sql = "DELETE FROM favorite_forms WHERE fav_form_id = $formId"
+            sql.exec()
+            return@transaction
+        }
     }
 
     private fun getShortFormsWithSQL(sql: String): MutableList<ShortFormDto> {

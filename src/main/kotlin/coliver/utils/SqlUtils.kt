@@ -14,6 +14,10 @@ fun <T : Any> String.execAndMap(transform: (ResultSet) -> T): List<T> {
     return result
 }
 
+fun String.exec(): Unit? {
+    return TransactionManager.current().exec(this)
+}
+
 fun buildFilterRequest(userId: Long, filter: FilterDto): String {
     val sqlString = "select * from" +
         " get_short_forms_with_filter" +

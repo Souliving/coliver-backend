@@ -1,5 +1,6 @@
 package coliver.dao.metro
 
+import coliver.dto.MetroFormDto
 import coliver.model.Metro
 
 interface MetroDAO {
@@ -7,4 +8,6 @@ interface MetroDAO {
     suspend fun getMetro(metroId: Long): Metro
     suspend fun getMetroByCityId(cityId: Long): List<Metro>
     suspend fun getMetroByName(metroName: String): Metro
+    suspend fun updateMetrosInForm(dto: MetroFormDto)
+    suspend fun deleteMetroForForm(id: Long)
 }

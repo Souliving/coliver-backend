@@ -1,7 +1,9 @@
 package coliver.routing.api.v1
 
+import coliver.dto.form.CreateFormDto
 import coliver.dto.form.FilterDto
 import coliver.services.ShortFormService
+import io.github.smiley4.ktorswaggerui.dsl.routing.delete
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.dsl.routing.post
 import io.github.smiley4.ktorswaggerui.dsl.routing.route
@@ -49,6 +51,24 @@ fun Route.shortFormRouting() {
             val userId = call.parameters["userId"]!!.toLong()
             val filter = call.receive<FilterDto>()
             call.respond(shortFormService.getWithFilter(userId, filter))
+        }
+
+        post("/createFormForUserById", {
+            request {
+                body<CreateFormDto>()
+            }
+        }) {
+            val dto = call.receive<CreateFormDto>()
+            call.respond(shortFormService.createForm(dto))
+        }
+
+        delete("/remove/{id}", {
+            request {
+                queryParameter<Long>("formId")
+            }
+        }) {
+            val formId = call.parameters["formId"]!!.toLong()
+            call.respond(shortFormService.deleteForm(formId))
         }
     }
 }
