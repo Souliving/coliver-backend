@@ -1,11 +1,14 @@
 package coliver.dao.home_owner
 
 import coliver.database.DatabaseFactory.dbQuery
+import coliver.dto.CreateHomeOwnerDto
 import coliver.model.HomeOwner
 import coliver.model.HomeOwners
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class HomeOwnerDAOImpl : HomeOwnerDAO {
 
@@ -30,7 +33,14 @@ class HomeOwnerDAOImpl : HomeOwnerDAO {
         HomeOwners.selectAll().where(HomeOwners.homeTypeId.eq(id)).map(::resultRowToHomeOwner)
     }
 
-    override suspend fun insert(homeOwner: HomeOwner) {
-        TODO("Not yet implemented")
+    override suspend fun insert(homeOwner: CreateHomeOwnerDto): Long = transaction {
+        val ins = HomeOwners.insert {
+            it[metroId] = homeOwner.metroId!!
+            it[cityId] = homeOwner.cityId!!
+            it[homeTypeId] = homeOwner.homeTypeId!!
+            it[description] = homeOwner.description
+            it[photoId] = homeOwner.photoId!!
+        }
+        ins.resultedValues?.singleOrNull()?.let { resultRowToHomeOwner(it).id }!!
     }
 }
