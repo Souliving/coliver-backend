@@ -93,7 +93,8 @@ fun Route.authRouting() {
                 call.response.status(HttpStatusCode.Unauthorized)
                 call.respondText(
                     Json.encodeToString(hashMapOf("error" to "Wrong password")),
-                    ContentType.Application.Json
+                    ContentType.Application.Json,
+                    HttpStatusCode.Unauthorized
                 )
                 return@post
             }
@@ -103,7 +104,7 @@ fun Route.authRouting() {
                 username = user.name!!,
                 role = user.role.toString()
             )
-            call.respond(generateJwtPayload(jwt))
+            call.respond(HttpStatusCode.OK, generateJwtPayload(jwt))
 
         }
         authenticate("userAuth") {
@@ -138,7 +139,7 @@ fun Route.authRouting() {
 
             val jwt = JwtInfo(userId, email, username, role)
             if (res != null) {
-                call.respond(generateJwtPayload(jwt))
+                call.respond(HttpStatusCode.Unauthorized, generateJwtPayload(jwt))
             } else {
                 call.respond(HttpStatusCode.Unauthorized)
             }

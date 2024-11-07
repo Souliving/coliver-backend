@@ -4,6 +4,7 @@ import coliver.dto.CreateHomeOwnerDto
 import coliver.services.HomeOwnerService
 import io.github.smiley4.ktorswaggerui.dsl.routing.post
 import io.github.smiley4.ktorswaggerui.dsl.routing.route
+import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -36,7 +37,7 @@ fun Route.homeOwnerRouting() {
             }
         }) {
             val dto = call.receive<CreateHomeOwnerDto>()
-            call.respond(homeOwnerService.insert(dto))
+            call.respond(HttpStatusCode.Created, homeOwnerService.insert(dto))
         }
     }
 }

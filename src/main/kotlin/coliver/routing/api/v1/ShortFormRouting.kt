@@ -7,6 +7,7 @@ import io.github.smiley4.ktorswaggerui.dsl.routing.delete
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.dsl.routing.post
 import io.github.smiley4.ktorswaggerui.dsl.routing.route
+import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -59,7 +60,7 @@ fun Route.shortFormRouting() {
             }
         }) {
             val dto = call.receive<CreateFormDto>()
-            call.respond(shortFormService.createForm(dto))
+            call.respond(HttpStatusCode.Created, shortFormService.createForm(dto))
         }
 
         delete("/remove/{id}", {
@@ -68,7 +69,7 @@ fun Route.shortFormRouting() {
             }
         }) {
             val formId = call.parameters["formId"]!!.toLong()
-            call.respond(shortFormService.deleteForm(formId))
+            call.respond(HttpStatusCode.OK, shortFormService.deleteForm(formId))
         }
     }
 }
