@@ -9,5 +9,6 @@ data class CreateUserDto(
     var password: String,
     val name: String,
     val age: Long,
-    val gender: Gender
+    val gender: Gender,
+    val phone: String
 )
