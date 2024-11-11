@@ -21,4 +21,5 @@ data class ShortFormDto(
     val photoId: Long? = null,
     val onlineDateTime: LocalDateTime?,
     val isFavorite: Boolean = false,
+    var imageLink: String? = null,
 )

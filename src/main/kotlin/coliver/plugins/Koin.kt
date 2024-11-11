@@ -60,7 +60,8 @@ val formModule = module {
 
 val shortFormModule = module {
     single<ShortFormDAO> { ShortFormDAOImpl() }
-    single<ShortFormService> { ShortFormService(get(), get(), get(), get(), get()) }
+    single<ImageService> { ImageService() }
+    single<ShortFormService> { ShortFormService(get(), get(), get(), get(), get(), get()) }
 }
 
 val favFormModule = module {

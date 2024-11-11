@@ -7,6 +7,9 @@ import coliver.dto.form.CreateFormDto
 import coliver.dto.form.FilterDto
 import coliver.dto.form.ShortFormDto
 import coliver.model.Form
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.toKotlinLocalDateTime
 
 class ShortFormService(
@@ -14,14 +17,40 @@ class ShortFormService(
     private val propertyService: PropertyService,
     private val metroService: MetroService,
     private val homeTypesService: HomeTypeService,
-    private val favFormService: FavFormService
+    private val favFormService: FavFormService,
+    private val imageService: ImageService
 ) {
 
-    suspend fun getAll(): List<ShortFormDto> = shortFormDAO.getAll()
-    suspend fun getById(id: Long): ShortFormDto = shortFormDAO.getById(id)!!
-    suspend fun getForUser(userId: Long): List<ShortFormDto> = shortFormDAO.getForUser(userId)
-    suspend fun getWithFilter(userId: Long, filter: FilterDto): List<ShortFormDto> =
-        shortFormDAO.getWithFilter(userId, filter)
+    suspend fun getAll(): List<ShortFormDto> {
+        val allForms = shortFormDAO.getAll()
+        allForms.pmap { shortFormDAO ->
+            val link = imageService.getImageLinkById(shortFormDAO.photoId!!)
+            shortFormDAO.imageLink = link
+        }
+        return allForms
+    }
+
+    suspend fun getById(id: Long): ShortFormDto = shortFormDAO.getById(id)!!.apply {
+        this.imageLink = imageService.getImageLinkById(this.photoId!!)
+    }
+
+    suspend fun getForUser(userId: Long): List<ShortFormDto> {
+        val forms = shortFormDAO.getForUser(userId)
+        forms.pmap { shortFormDAO ->
+            val link = imageService.getImageLinkById(shortFormDAO.photoId!!)
+            shortFormDAO.imageLink = link
+        }
+        return forms
+    }
+
+    suspend fun getWithFilter(userId: Long, filter: FilterDto): List<ShortFormDto> {
+        val filteredDao = shortFormDAO.getWithFilter(userId, filter)
+        filteredDao.pmap { shortFormDAO ->
+            val link = imageService.getImageLinkById(shortFormDAO.photoId!!)
+            shortFormDAO.imageLink = link
+        }
+        return filteredDao
+    }
 
     suspend fun createForm(dto: CreateFormDto): ShortFormDto {
         val newForm = shortFormDAO.save(dto.toForm())
@@ -52,4 +81,8 @@ class ShortFormService(
         dateMove = this.dateMove.toKotlinLocalDateTime(),
         onlineDateTime = this.onlineDateTime.toKotlinLocalDateTime()
     )
+}
+
+suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): List<B> = coroutineScope {
+    map { async { f(it) } }.awaitAll()
 }
