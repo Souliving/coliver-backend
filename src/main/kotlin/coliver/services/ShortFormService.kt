@@ -52,6 +52,15 @@ class ShortFormService(
         return filteredDao
     }
 
+    suspend fun getWithFilterWithoutId(filter: FilterDto): List<ShortFormDto> {
+        val filteredDao = shortFormDAO.getWithFilterWithoutId(filter)
+        filteredDao.pmap { shortFormDAO ->
+            val link = imageService.getImageLinkById(shortFormDAO.photoId!!)
+            shortFormDAO.imageLink = link
+        }
+        return filteredDao
+    }
+
     suspend fun createForm(dto: CreateFormDto): ShortFormDto {
         val newForm = shortFormDAO.save(dto.toForm())
 

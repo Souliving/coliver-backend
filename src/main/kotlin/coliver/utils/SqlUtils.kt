@@ -29,6 +29,17 @@ fun buildFilterRequest(userId: Long, filter: FilterDto): String {
         " ${filter.petFriendly.buildSqlParameter()}, ${filter.isClean.buildSqlParameter()})"
     return sqlString
 }
+fun buildFilterRequestWithoutId(filter: FilterDto): String {
+    val sqlString = "select * from" +
+        " get_short_forms_with_filter_without_user_id" +
+        "(${filter.price.startPrice?.buildSqlParameter()},${filter.price.endPrice?.buildSqlParameter()}," +
+        "${filter.age.startAge?.buildSqlParameter()}, ${filter.age.endAge?.buildSqlParameter()}," +
+        "${filter.cityId.buildSqlParameter()}, ${filter.metroIds.buildSqlParameter()}," +
+        " ${filter.smoking.buildSqlParameter()}, ${filter.alcohol.buildSqlParameter()}," +
+        " ${filter.petFriendly.buildSqlParameter()}, ${filter.isClean.buildSqlParameter()})"
+    return sqlString
+}
+
 
 private fun Number.buildSqlParameter(): String {
     if (this == null) {

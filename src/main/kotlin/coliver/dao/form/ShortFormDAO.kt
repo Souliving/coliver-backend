@@ -9,6 +9,7 @@ interface ShortFormDAO {
     suspend fun getById(id: Long): ShortFormDto?
     suspend fun getForUser(userId: Long): List<ShortFormDto>
     suspend fun getWithFilter(userId: Long, filter: FilterDto): List<ShortFormDto>
+    suspend fun getWithFilterWithoutId(filter: FilterDto): List<ShortFormDto>
     suspend fun save(form: Form): Form
     suspend fun delete(id: Long): Int
 }

@@ -6,6 +6,7 @@ import coliver.dto.form.FilterDto
 import coliver.dto.form.ShortFormDto
 import coliver.model.*
 import coliver.utils.buildFilterRequest
+import coliver.utils.buildFilterRequestWithoutId
 import coliver.utils.execAndMap
 import coliver.utils.mapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -75,6 +76,11 @@ class ShortFormDAOImpl : ShortFormDAO {
 
     override suspend fun getWithFilter(userId: Long, filter: FilterDto): List<ShortFormDto> = transaction {
         val sql = buildFilterRequest(userId, filter)
+        getShortFormsPersonalizedWithSQL(sql)
+    }
+
+    override suspend fun getWithFilterWithoutId(filter: FilterDto): List<ShortFormDto> = transaction {
+        val sql = buildFilterRequestWithoutId(filter)
         getShortFormsPersonalizedWithSQL(sql)
     }
 

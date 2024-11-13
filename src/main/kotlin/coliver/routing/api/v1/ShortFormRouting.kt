@@ -54,6 +54,15 @@ fun Route.shortFormRouting() {
             call.respond(shortFormService.getWithFilter(userId, filter))
         }
 
+        post("/getWithFilterWithoutId", {
+            request {
+                body<FilterDto>()
+            }
+        }) {
+            val filter = call.receive<FilterDto>()
+            call.respond(shortFormService.getWithFilterWithoutId(filter))
+        }
+
         post("/createFormForUserById", {
             request {
                 body<CreateFormDto>()
