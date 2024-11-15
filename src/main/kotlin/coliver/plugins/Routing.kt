@@ -8,6 +8,7 @@ import io.github.smiley4.ktorswaggerui.data.AuthType
 import io.github.smiley4.ktorswaggerui.routing.openApiSpec
 import io.github.smiley4.ktorswaggerui.routing.swaggerUI
 import io.ktor.server.application.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
 
@@ -46,6 +47,13 @@ fun Application.configureRouting() {
 
         route("swagger") {
             swaggerUI("/api.json")
+        }
+
+
+        routing {
+            get("/metrics") {
+                call.respond(appMicrometerRegistry.scrape())
+            }
         }
         route("api/v1") {
             authRouting()

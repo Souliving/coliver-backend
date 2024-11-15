@@ -1,9 +1,6 @@
 package coliver
 
-import coliver.plugins.configureDatabases
-import coliver.plugins.configureKoin
-import coliver.plugins.configureRouting
-import coliver.plugins.configureSerialization
+import coliver.plugins.*
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.*
@@ -54,6 +51,7 @@ fun Application.module() {
     configureSerialization()
     configureDatabases()
     configureKoin()
+    configureMonitoring()
     configureRouting()
 }
 
