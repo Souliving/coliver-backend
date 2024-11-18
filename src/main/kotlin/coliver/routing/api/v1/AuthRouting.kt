@@ -2,6 +2,7 @@ package coliver.routing.api.v1
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import coliver.dto.*
+import coliver.model.Gender
 import coliver.services.UserService
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -72,7 +73,14 @@ fun Route.authRouting() {
 
         post("/login", {
             request {
-                body<AuthDto>()
+                body<AuthDto> {
+                    example("Login") {
+                        value = AuthDto(
+                            email = "email@gmail.com",
+                            password = "password"
+                        )
+                    }
+                }
             }
         })
         {
@@ -147,7 +155,18 @@ fun Route.authRouting() {
 
         post("register", {
             request {
-                body<CreateUserDto>()
+                body<CreateUserDto> {
+                    example("Register") {
+                        value = CreateUserDto(
+                            email = "email@gmail.com",
+                            password = "123456",
+                            name = "name",
+                            age = 21L,
+                            gender = Gender.MALE,
+                            phone = "8312312321"
+                        )
+                    }
+                }
             }
         }) {
             val dto = call.receive<CreateUserDto>()

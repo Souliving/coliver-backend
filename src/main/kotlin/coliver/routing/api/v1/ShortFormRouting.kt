@@ -1,7 +1,10 @@
 package coliver.routing.api.v1
 
+import coliver.dto.CreatePropertiesDto
+import coliver.dto.form.AgeFilterDto
 import coliver.dto.form.CreateFormDto
 import coliver.dto.form.FilterDto
+import coliver.dto.form.PriceFilterDto
 import coliver.services.ShortFormService
 import io.github.smiley4.ktorswaggerui.dsl.routing.delete
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
@@ -46,7 +49,20 @@ fun Route.shortFormRouting() {
         post("/getShortFormsWithFilter/{userId}", {
             request {
                 queryParameter<Long>("userId")
-                body<FilterDto>()
+                body<FilterDto> {
+                    example("Example filter") {
+                        value = FilterDto(
+                            price = PriceFilterDto(0L, 100000L),
+                            age = AgeFilterDto(1, 25),
+                            cityId = listOf(),
+                            metroIds = listOf(),
+                            smoking = false,
+                            alcohol = true,
+                            isClean = true,
+                            petFriendly = false,
+                        )
+                    }
+                }
             }
         }) {
             val userId = call.parameters["userId"]!!.toLong()
@@ -56,7 +72,20 @@ fun Route.shortFormRouting() {
 
         post("/getWithFilterWithoutId", {
             request {
-                body<FilterDto>()
+                body<FilterDto> {
+                    example("Example filter") {
+                        value = FilterDto(
+                            price = PriceFilterDto(0L, 100000L),
+                            age = AgeFilterDto(1, 25),
+                            cityId = listOf(),
+                            metroIds = listOf(),
+                            smoking = false,
+                            alcohol = true,
+                            isClean = true,
+                            petFriendly = false,
+                        )
+                    }
+                }
             }
         }) {
             val filter = call.receive<FilterDto>()
@@ -65,7 +94,30 @@ fun Route.shortFormRouting() {
 
         post("/createFormForUserById", {
             request {
-                body<CreateFormDto>()
+                body<CreateFormDto> {
+                    example("Example CreateForm") {
+                        value = CreateFormDto(
+                            userId = 6,
+                            description = "Описание",
+                            homeTypesIds = listOf(1L, 2L),
+                            rating = 5.0,
+                            reviews = listOf("Yes"),
+                            photoId = 1,
+                            properties = CreatePropertiesDto(
+                                smoking = false,
+                                alcohol = false,
+                                isClean = false,
+                                petFriendly = false,
+                                homeOwnerId = null,
+                            ),
+                            cityId = 1,
+                            metroIds = listOf(1,2),
+                            budget = 50000L,
+                            dateMove = java.time.LocalDateTime.now(),
+                            onlineDateTime = java.time.LocalDateTime.now()
+                        )
+                    }
+                }
             }
         }) {
             val dto = call.receive<CreateFormDto>()
