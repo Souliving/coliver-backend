@@ -7,7 +7,7 @@ class ImageService {
 
     suspend fun getImageLinkById(id: Long): String {
         val paths = imageDAO.getImagesById(id)
-        val info = paths.first()
+        val info = paths.firstOrNull() ?: return "no image"
         val imgUrl = minio.getPresignedUrl(info.bucketName, info.objectName)
         return imgUrl!!
     }
