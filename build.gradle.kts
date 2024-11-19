@@ -54,7 +54,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio-jvm:3.0.0")
     implementation("at.favre.lib:bcrypt:0.10.2")
     implementation("io.ktor:ktor-client-java:$ktor_version")
-    implementation("io.github.smiley4:ktor-swagger-ui:4.0.0")
+    implementation("io.github.smiley4:ktor-swagger-ui:4.1.0")
     implementation("io.github.smiley4:schema-kenerator-core:1.5.0")
     implementation("io.github.smiley4:schema-kenerator-serialization:1.5.0")
     implementation("io.github.smiley4:schema-kenerator-swagger:1.5.0")

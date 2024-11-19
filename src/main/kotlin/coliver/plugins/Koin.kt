@@ -66,7 +66,7 @@ val shortFormModule = module {
 
 val favFormModule = module {
     single<FavFormDAO> { FavFormDAOImpl() }
-    single<FavFormService> { FavFormService(get()) }
+    single<FavFormService> { FavFormService(get(), get()) }
 }
 
 fun Application.configureKoin() {

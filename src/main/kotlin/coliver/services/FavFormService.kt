@@ -3,8 +3,16 @@ package coliver.services
 import coliver.dao.form.FavFormDAO
 import coliver.dto.form.ShortFormDto
 
-class FavFormService(private val favFormDAO: FavFormDAO) {
-    suspend fun getFavForms(userId: Long): List<ShortFormDto> = favFormDAO.getByUserId(userId)
+class FavFormService(private val favFormDAO: FavFormDAO, private val imageService: ImageService) {
+    suspend fun getFavForms(userId: Long): List<ShortFormDto> {
+        val favForms = favFormDAO.getByUserId(userId)
+        favForms.pmap { shortFormDAO ->
+            val link = imageService.getImageLinkById(shortFormDAO.photoId!!)
+            shortFormDAO.imageLink = link
+        }
+        return favForms
+    }
+
     suspend fun add(userId: Long, formId: Long) = favFormDAO.add(userId, formId)
     suspend fun delete(userId: Long, formId: Long) = favFormDAO.delete(userId, formId)
     suspend fun deleteForFormId(formId: Long) = favFormDAO.deleteForForm(formId)
