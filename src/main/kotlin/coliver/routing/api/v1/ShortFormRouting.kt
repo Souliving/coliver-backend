@@ -6,6 +6,7 @@ import coliver.dto.form.CreateFormDto
 import coliver.dto.form.FilterDto
 import coliver.dto.form.PriceFilterDto
 import coliver.services.ShortFormService
+import io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRequest
 import io.github.smiley4.ktorswaggerui.dsl.routing.delete
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.dsl.routing.post
@@ -46,49 +47,23 @@ fun Route.shortFormRouting() {
             call.respond(shortFormService.getForUser(userId))
         }
 
-        post("/getShortFormsWithFilter/{userId}", {
+        get("/getShortFormsWithFilter/{userId}", {
             request {
                 queryParameter<Long>("userId")
-                body<FilterDto> {
-                    example("Example filter") {
-                        value = FilterDto(
-                            price = PriceFilterDto(0L, 100000L),
-                            age = AgeFilterDto(1, 25),
-                            cityId = listOf(),
-                            metroIds = listOf(),
-                            smoking = false,
-                            alcohol = true,
-                            isClean = true,
-                            petFriendly = false,
-                        )
-                    }
-                }
+                filterParams()
             }
         }) {
             val userId = call.parameters["userId"]!!.toLong()
-            val filter = call.receive<FilterDto>()
+            val filter = parseQueryParams()
             call.respond(shortFormService.getWithFilter(userId, filter))
         }
 
-        post("/getWithFilterWithoutId", {
+        get("/getWithFilterWithoutId", {
             request {
-                body<FilterDto> {
-                    example("Example filter") {
-                        value = FilterDto(
-                            price = PriceFilterDto(0L, 100000L),
-                            age = AgeFilterDto(1, 25),
-                            cityId = listOf(),
-                            metroIds = listOf(),
-                            smoking = false,
-                            alcohol = true,
-                            isClean = true,
-                            petFriendly = false,
-                        )
-                    }
-                }
+                filterParams()
             }
         }) {
-            val filter = call.receive<FilterDto>()
+            val filter = parseQueryParams()
             call.respond(shortFormService.getWithFilterWithoutId(filter))
         }
 
@@ -133,4 +108,38 @@ fun Route.shortFormRouting() {
             call.respond(HttpStatusCode.OK, shortFormService.deleteForm(formId))
         }
     }
+}
+
+private fun OpenApiRequest.filterParams() {
+    queryParameter<Long>("startPrice")
+    queryParameter<Long>("endPrice")
+    queryParameter<Int>("startAge")
+    queryParameter<Int>("endAge")
+    queryParameter<Long>("cityId")
+    queryParameter<Long>("metroId")
+    queryParameter<Boolean>("smoking")
+    queryParameter<Boolean>("alcohol")
+    queryParameter<Boolean>("petFriendly")
+    queryParameter<Boolean>("isClean")
+}
+
+private fun RoutingContext.parseQueryParams(): FilterDto {
+    val filterParams = call.request.queryParameters
+    val dto = FilterDto(
+        price = PriceFilterDto(
+            startPrice = filterParams["startPrice"]?.toLong(),
+            endPrice = filterParams["endPrice"]?.toLong()
+        ),
+        age = AgeFilterDto(
+            startAge = filterParams["startAge"]?.toInt(),
+            endAge = filterParams["endAge"]?.toInt()
+        ),
+        cityId = filterParams["cityId"]?.split(",")?.map { it -> it.toLong() } ?: emptyList(),
+        metroIds = filterParams["metroIds"]?.split(",")?.map { it -> it.toLong() } ?: emptyList(),
+        smoking = filterParams["smoking"]?.toBoolean(),
+        alcohol = filterParams["alcohol"]?.toBoolean(),
+        petFriendly = filterParams["petFriendly"]?.toBoolean(),
+        isClean = filterParams["isClean"]?.toBoolean(),
+    )
+    return dto
 }
