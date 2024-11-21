@@ -58,6 +58,9 @@ fun Application.configureRouting() {
             get("/metrics") {
                 call.respond(appMicrometerRegistry.scrape())
             }
+            get("/") {
+                call.respondRedirect("/swagger")
+            }
         }
         route("api/v1") {
             authRouting()
