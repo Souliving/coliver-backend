@@ -7,6 +7,7 @@ import coliver.dto.form.CreateFormDto
 import coliver.dto.form.FilterDto
 import coliver.dto.form.ShortFormDto
 import coliver.model.Form
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -92,6 +93,6 @@ class ShortFormService(
     )
 }
 
-suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): List<B> = coroutineScope {
-    map { async { f(it) } }.awaitAll()
+suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): Iterable<B> = coroutineScope {
+    map { async(Dispatchers.IO) { f(it) } }.awaitAll()
 }
