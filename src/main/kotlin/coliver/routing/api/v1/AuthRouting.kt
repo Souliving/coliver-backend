@@ -168,7 +168,8 @@ fun Route.authRouting() {
                     }
                 }
             }
-        }) {
+        })
+        {
             val dto = call.receive<CreateUserDto>()
             dto.apply {
                 this.password = String(BCrypt.with(SecureRandom()).hashToChar(10, this.password.toCharArray()));
