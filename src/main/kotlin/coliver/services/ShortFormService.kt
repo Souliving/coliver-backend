@@ -7,7 +7,6 @@ import coliver.dto.form.CreateFormDto
 import coliver.dto.form.FilterDto
 import coliver.dto.form.ShortFormDto
 import coliver.model.Form
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -24,10 +23,14 @@ class ShortFormService(
 
     suspend fun getAll(): List<ShortFormDto> {
         val allForms = shortFormDAO.getAll()
-        allForms.pmap { shortFormDAO ->
-            val link = imageService.getImageLinkById(shortFormDAO.photoId!!)
-            shortFormDAO.imageLink = link
+
+        val ids = allForms.map { it.photoId ?: 0 }
+        val imgLinks = imageService.getLinksForIds(ids)
+
+        allForms.map {
+            it.imageLink = imgLinks[it.photoId]
         }
+
         return allForms
     }
 
@@ -37,28 +40,39 @@ class ShortFormService(
 
     suspend fun getForUser(userId: Long): List<ShortFormDto> {
         val forms = shortFormDAO.getForUser(userId)
-        forms.pmap { shortFormDAO ->
-            val link = imageService.getImageLinkById(shortFormDAO.photoId!!)
-            shortFormDAO.imageLink = link
+
+        val ids = forms.map { it.photoId ?: 0 }
+        val imgLinks = imageService.getLinksForIds(ids)
+
+        forms.map { it ->
+            it.imageLink = imgLinks[it.photoId]
         }
         return forms
     }
 
     suspend fun getWithFilter(userId: Long, filter: FilterDto): List<ShortFormDto> {
         val filteredDao = shortFormDAO.getWithFilter(userId, filter)
-        filteredDao.pmap { shortFormDAO ->
-            val link = imageService.getImageLinkById(shortFormDAO.photoId!!)
-            shortFormDAO.imageLink = link
+
+        val ids = filteredDao.map { it.photoId ?: 0 }
+        val imgLinks = imageService.getLinksForIds(ids)
+
+        filteredDao.map { it ->
+            it.imageLink = imgLinks[it.photoId]
         }
+
         return filteredDao
     }
 
     suspend fun getWithFilterWithoutId(filter: FilterDto): List<ShortFormDto> {
         val filteredDao = shortFormDAO.getWithFilterWithoutId(filter)
-        filteredDao.pmap { shortFormDAO ->
-            val link = imageService.getImageLinkById(shortFormDAO.photoId!!)
-            shortFormDAO.imageLink = link
+
+        val ids = filteredDao.map { it.photoId ?: 0 }
+        val imgLinks = imageService.getLinksForIds(ids)
+
+        filteredDao.map { it ->
+            it.imageLink = imgLinks[it.photoId]
         }
+
         return filteredDao
     }
 
@@ -94,5 +108,5 @@ class ShortFormService(
 }
 
 suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): Iterable<B> = coroutineScope {
-    map { async(Dispatchers.IO) { f(it) } }.awaitAll()
+    map { async { f(it) } }.awaitAll()
 }
