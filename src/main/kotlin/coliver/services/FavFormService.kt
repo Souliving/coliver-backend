@@ -6,9 +6,11 @@ import coliver.dto.form.ShortFormDto
 class FavFormService(private val favFormDAO: FavFormDAO, private val imageService: ImageService) {
     suspend fun getFavForms(userId: Long): List<ShortFormDto> {
         val favForms = favFormDAO.getByUserId(userId)
-        favForms.pmap { shortFormDAO ->
-            val link = imageService.getImageLinkById(shortFormDAO.photoId!!)
-            shortFormDAO.imageLink = link
+        val ids = favForms.map { it.photoId ?: 0 }
+        val imgLinks = imageService.getLinksForIds(ids)
+
+        favForms.map { it ->
+            it.imageLink = imgLinks[it.photoId]
         }
         return favForms
     }
