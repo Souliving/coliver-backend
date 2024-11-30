@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 data class ShortFormDto(
     val id: Long? = null,
     val name: String,
-    val age: Int,
+    val age: Long,
     val city: City? = null,
     val metro: List<Metro>,
     val budget: Long,

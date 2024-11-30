@@ -1,12 +1,14 @@
 package coliver.services
 
 import coliver.dao.form.ShortFormDAO
+import coliver.database.Loom
 import coliver.dto.HomeTypeFormDto
 import coliver.dto.MetroFormDto
 import coliver.dto.form.CreateFormDto
 import coliver.dto.form.FilterDto
 import coliver.dto.form.ShortFormDto
 import coliver.model.Form
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -24,11 +26,11 @@ class ShortFormService(
     suspend fun getAll(): List<ShortFormDto> {
         val allForms = shortFormDAO.getAll()
 
-        val ids = allForms.map { it.photoId ?: 0 }
-        val imgLinks = imageService.getLinksForIds(ids)
+//        val ids = allForms.map { it.photoId ?: 0 }
+//        val imgLinks = imageService.getLinksForIds(ids)
 
-        allForms.map {
-            it.imageLink = imgLinks[it.photoId]
+        allForms.pmap {
+            it.imageLink = imageService.getImageLinkById(it.photoId?: 0)
         }
 
         return allForms
@@ -108,5 +110,5 @@ class ShortFormService(
 }
 
 suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): Iterable<B> = coroutineScope {
-    map { async { f(it) } }.awaitAll()
+    map { async(Dispatchers.Loom) { f(it) } }.awaitAll()
 }

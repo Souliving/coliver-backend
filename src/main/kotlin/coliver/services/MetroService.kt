@@ -16,5 +16,5 @@ class MetroService(private val metroDAO: MetroDAO) {
 
     suspend fun updateMetrosInForm(dto: MetroFormDto) = metroDAO.updateMetrosInForm(dto)
 
-    suspend fun deleteMetroForForm(id: Long)= metroDAO.deleteMetroForForm(id)
+    suspend fun deleteMetroForForm(id: Long): Int = metroDAO.deleteMetroForForm(id)
 }

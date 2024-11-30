@@ -116,7 +116,7 @@ private fun OpenApiRequest.filterParams() {
     queryParameter<Int>("startAge")
     queryParameter<Int>("endAge")
     queryParameter<Long>("cityId")
-    queryParameter<Long>("metroId")
+    queryParameter<Long>("metroIds")
     queryParameter<Boolean>("smoking")
     queryParameter<Boolean>("alcohol")
     queryParameter<Boolean>("petFriendly")
@@ -131,8 +131,8 @@ private fun RoutingContext.parseQueryParams(): FilterDto {
             endPrice = filterParams["endPrice"]?.toLong()
         ),
         age = AgeFilterDto(
-            startAge = filterParams["startAge"]?.toInt(),
-            endAge = filterParams["endAge"]?.toInt()
+            startAge = filterParams["startAge"]?.toLong(),
+            endAge = filterParams["endAge"]?.toLong()
         ),
         cityId = filterParams["cityId"]?.split(",")?.map { it -> it.toLong() } ?: emptyList(),
         metroIds = filterParams["metroIds"]?.split(",")?.map { it -> it.toLong() } ?: emptyList(),

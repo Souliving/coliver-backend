@@ -1,5 +1,7 @@
 package coliver.services
 
+import coliver_images.dao.dao
+import coliver_images.plugins.minio
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache5.*
@@ -32,10 +34,20 @@ class ImageService {
     }
 
 
-    suspend fun getImageLinkById(id: Long): String {
+    suspend fun getImageLinkByIdByWeb(id: Long): String {
         val extraPath = "getImageById/$id"
         val link = client.get("$imageAPI/$extraPath").body<String>()
         return link
+    }
+
+    suspend fun getImageLinkById(id: Long): String {
+        val paths = dao.getImagesById(id)
+        if (paths.isEmpty()) {
+            return "not found"
+        }
+        val info = paths.first()
+        val imgUrl = minio.getPresignedUrl(info.bucketName, info.objectName)
+        return imgUrl ?: "not found"
     }
 
     suspend fun getLinksForIds(ids: List<Long>): HashMap<Long, String> {

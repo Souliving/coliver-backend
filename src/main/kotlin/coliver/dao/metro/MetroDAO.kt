@@ -9,5 +9,5 @@ interface MetroDAO {
     suspend fun getMetroByCityId(cityId: Long): List<Metro>
     suspend fun getMetroByName(metroName: String): Metro
     suspend fun updateMetrosInForm(dto: MetroFormDto)
-    suspend fun deleteMetroForForm(id: Long)
+    suspend fun deleteMetroForForm(id: Long): Int
 }

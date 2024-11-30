@@ -16,8 +16,8 @@ data class FilterDto(
 
 @Serializable
 data class AgeFilterDto(
-    val startAge: Int? = null,
-    val endAge: Int? = null,
+    val startAge: Long? = null,
+    val endAge: Long? = null,
 )
 
 @Serializable

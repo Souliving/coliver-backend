@@ -7,5 +7,5 @@ interface HomeTypeDAO {
     suspend fun getAll(): List<HomeType>
     suspend fun getById(id: Long): HomeType
     suspend fun updateForForm(dto: HomeTypeFormDto)
-    suspend fun deleteForForm(id: Long)
+    suspend fun deleteForForm(id: Long): Int
 }
