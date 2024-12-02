@@ -1,4 +1,4 @@
-package coliver_images.plugins
+package coliver.images
 
 import coliver.database.Loom
 import io.minio.GetPresignedObjectUrlArgs
@@ -49,13 +49,13 @@ val okHttpClient = OkHttpClient().newBuilder()
 
 private fun createDispatcher(): Dispatcher {
     val dispatcher = Dispatcher(Executors.newCachedThreadPool())
-    dispatcher.maxRequests = 10000
-    dispatcher.maxRequestsPerHost = 1024
+    dispatcher.maxRequests = 30000
+    dispatcher.maxRequestsPerHost = 10000
     return dispatcher
 }
 
 private fun createConnectionPool(): ConnectionPool {
-    return ConnectionPool(1024, 10000, TimeUnit.MILLISECONDS)
+    return ConnectionPool(2048, 10000, TimeUnit.MILLISECONDS)
 }
 
 val minio = Minio(

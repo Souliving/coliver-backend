@@ -1,13 +1,11 @@
-package coliver_images.dao
+package coliver.images
 
 import coliver.database.DatabaseFactory.dbQuery
-import coliver_images.model.Image
-import coliver_images.model.Images
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.selectAll
 
-class DAOFacadeImpl : ImagesDAO {
+class ImagesDaoImpl : ImagesDAO {
 
     private fun resultRowToImage(row: ResultRow) = Image(
         id = row[Images.id],
@@ -24,10 +22,14 @@ class DAOFacadeImpl : ImagesDAO {
         Images.selectAll().where { Images.id eq id }.map(::resultRowToImage)
     }
 
+    override suspend fun getPackedImagesByIds(ids: List<Long>): List<Image> = dbQuery {
+        Images.selectAll().where { Images.id inList ids }.map(::resultRowToImage)
+    }
+
 
 }
 
-val dao: ImagesDAO = DAOFacadeImpl().apply {
+val imageDAO: ImagesDAO = ImagesDaoImpl().apply {
     runBlocking {
 //        if (allImages().isEmpty()) {
 //            val image = Image( userId = 2, bucketName = "images", objectName = "Жопа.jpg")

@@ -13,6 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.toKotlinLocalDateTime
+import kotlin.collections.get
 
 class ShortFormService(
     private val shortFormDAO: ShortFormDAO,
@@ -26,11 +27,11 @@ class ShortFormService(
     suspend fun getAll(): List<ShortFormDto> {
         val allForms = shortFormDAO.getAll()
 
-//        val ids = allForms.map { it.photoId ?: 0 }
-//        val imgLinks = imageService.getLinksForIds(ids)
+        val ids = allForms.map { it.photoId ?: 0 }
+        val imgPack = imageService.getImageLinkPack(ids)
 
         allForms.pmap {
-            it.imageLink = imageService.getImageLinkById(it.photoId?: 0)
+            it.imageLink = imgPack[it.photoId]?.imgLink ?: "not null"
         }
 
         return allForms
@@ -44,11 +45,12 @@ class ShortFormService(
         val forms = shortFormDAO.getForUser(userId)
 
         val ids = forms.map { it.photoId ?: 0 }
-        val imgLinks = imageService.getLinksForIds(ids)
+        val imgPack = imageService.getImageLinkPack(ids)
 
-        forms.map { it ->
-            it.imageLink = imgLinks[it.photoId]
+        forms.pmap {
+            it.imageLink = imgPack[it.photoId]?.imgLink ?: "not null"
         }
+
         return forms
     }
 
@@ -56,10 +58,10 @@ class ShortFormService(
         val filteredDao = shortFormDAO.getWithFilter(userId, filter)
 
         val ids = filteredDao.map { it.photoId ?: 0 }
-        val imgLinks = imageService.getLinksForIds(ids)
+        val imgPack = imageService.getImageLinkPack(ids)
 
-        filteredDao.map { it ->
-            it.imageLink = imgLinks[it.photoId]
+        filteredDao.pmap {
+            it.imageLink = imgPack[it.photoId]?.imgLink ?: "not null"
         }
 
         return filteredDao
@@ -69,10 +71,10 @@ class ShortFormService(
         val filteredDao = shortFormDAO.getWithFilterWithoutId(filter)
 
         val ids = filteredDao.map { it.photoId ?: 0 }
-        val imgLinks = imageService.getLinksForIds(ids)
+        val imgPack = imageService.getImageLinkPack(ids)
 
-        filteredDao.map { it ->
-            it.imageLink = imgLinks[it.photoId]
+        filteredDao.pmap {
+            it.imageLink = imgPack[it.photoId]?.imgLink ?: "not null"
         }
 
         return filteredDao
