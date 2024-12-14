@@ -16,7 +16,6 @@ fun Route.homeOwnerRouting() {
     route("/homeOwner", {
         tags("homeOwner")
     }) {
-
         get("/") {
             call.respond(homeOwnerService.getAll())
         }

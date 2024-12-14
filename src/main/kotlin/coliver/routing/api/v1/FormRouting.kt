@@ -8,13 +8,11 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Route.formRouting() {
-
     val formService by application.inject<FormService>()
 
     route("/form", {
         tags("forms")
     }) {
-
         get {
             call.respond(formService.getAll())
         }

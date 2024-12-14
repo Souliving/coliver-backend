@@ -11,7 +11,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.Executor
 import kotlin.coroutines.CoroutineContext
 
-
 object DatabaseFactory {
     fun init(databaseParams: ConnectionParams) {
         initDB(databaseParams)
@@ -20,27 +19,26 @@ object DatabaseFactory {
         }
     }
 
-    suspend fun <T> dbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(Dispatchers.Loom) { block() }
+    suspend fun <T> dbQuery(block: suspend () -> T): T = newSuspendedTransaction(Dispatchers.Loom) { block() }
 
     private fun initDB(databaseParams: ConnectionParams) {
-
-        val config = HikariConfig().apply {
-            jdbcUrl = databaseParams.url
-            username = databaseParams.user
-            password = databaseParams.password
-            maximumPoolSize = 100
-        }
+        val config =
+            HikariConfig().apply {
+                jdbcUrl = databaseParams.url
+                username = databaseParams.user
+                password = databaseParams.password
+                maximumPoolSize = 100
+            }
         val ds = HikariDataSource(config)
         Database.connect(ds)
     }
 }
 
 object LoomDispatcher : ExecutorCoroutineDispatcher() {
-
-    override val executor: Executor = Executor { command ->
-        Thread.startVirtualThread(command)
-    }
+    override val executor: Executor =
+        Executor { command ->
+            Thread.startVirtualThread(command)
+        }
 
     override fun dispatch(
         context: CoroutineContext,

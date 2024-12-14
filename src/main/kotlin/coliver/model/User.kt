@@ -21,14 +21,16 @@ data class User(
 )
 
 enum class UserRole {
-    USER, ADMIN
+    USER,
+    ADMIN
 }
 
 enum class Gender {
-    MALE, FEMALE
+    MALE,
+    FEMALE
 }
 
-object Users: Table("users") {
+object Users : Table("users") {
     val id = long("id").autoIncrement()
     val email = varchar("email", 256)
     val password = varchar("password", 2048)

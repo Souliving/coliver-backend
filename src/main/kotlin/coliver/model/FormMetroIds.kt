@@ -11,7 +11,7 @@ data class FormMetroId(
     var metroId: Long
 )
 
-object FormMetroIds: Table("form_metro_ids") {
+object FormMetroIds : Table("form_metro_ids") {
     var id = long("id").autoIncrement()
     var formId = long("form_id")
     var metroId = long("metro_id")

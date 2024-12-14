@@ -12,7 +12,6 @@ fun Route.propertyRouting() {
     route("/properties", {
         tags("property")
     }) {
-
         get("/{id}") {
             val id = call.parameters["id"]!!.toLong()
             call.respond(propertyService.getById(id))

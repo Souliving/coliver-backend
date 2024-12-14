@@ -18,7 +18,6 @@ fun Route.userRouting() {
     route("/users", {
         tags("users")
     }) {
-
         get {
             call.respond(userService.getAll())
         }

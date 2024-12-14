@@ -15,25 +15,25 @@ import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBu
 class ImageService {
     private val imageAPI = "http://94.103.89.23:9090"
 
-    private val client = HttpClient(Apache5) {
-        engine {
-            connectTimeout = 10_000
-            connectionRequestTimeout = 20_000
-            customizeClient {
-                setConnectionManager(
-                    PoolingAsyncClientConnectionManagerBuilder.create()
-                        .setMaxConnTotal(10_000)
-                        .setMaxConnPerRoute(500)
-                        .build()
-                )
-
+    private val client =
+        HttpClient(Apache5) {
+            engine {
+                connectTimeout = 10_000
+                connectionRequestTimeout = 20_000
+                customizeClient {
+                    setConnectionManager(
+                        PoolingAsyncClientConnectionManagerBuilder
+                            .create()
+                            .setMaxConnTotal(10_000)
+                            .setMaxConnPerRoute(500)
+                            .build(),
+                    )
+                }
+            }
+            install(ContentNegotiation) {
+                json()
             }
         }
-        install(ContentNegotiation) {
-            json()
-        }
-    }
-
 
     suspend fun getImageLinkByIdByWeb(id: Long): String {
         val extraPath = "getImageById/$id"
@@ -70,10 +70,12 @@ class ImageService {
 
     suspend fun getLinksForIds(ids: List<Long>): HashMap<Long, String> {
         val extraPath = "assembleImgLinks"
-        val links = client.post("$imageAPI/$extraPath") {
-            contentType(ContentType.Application.Json)
-            setBody(ids)
-        }.body<HashMap<Long, String>>()
+        val links =
+            client
+                .post("$imageAPI/$extraPath") {
+                    contentType(ContentType.Application.Json)
+                    setBody(ids)
+                }.body<HashMap<Long, String>>()
         return links
     }
 }

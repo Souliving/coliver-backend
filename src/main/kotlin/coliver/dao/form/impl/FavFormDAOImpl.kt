@@ -11,12 +11,15 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class FavFormDAOImpl : FavFormDAO {
+    override suspend fun getByUserId(userId: Long): List<ShortFormDto> =
+        dbQuery {
+            getFavShortForms(userId).map(::resultRowToShortFormWithFavs)
+        }
 
-    override suspend fun getByUserId(userId: Long): List<ShortFormDto> = dbQuery {
-        getFavShortForms(userId).map(::resultRowToShortFormWithFavs)
-    }
-
-    override suspend fun add(userId: Long, favFormId: Long) = transaction {
+    override suspend fun add(
+        userId: Long,
+        favFormId: Long
+    ) = transaction {
         FavoriteForms.insert {
             it[FavoriteForms.userId] = userId
             it[FavoriteForms.favFormId] = favFormId
@@ -24,14 +27,17 @@ class FavFormDAOImpl : FavFormDAO {
         return@transaction
     }
 
-    override suspend fun delete(userId: Long, favFormId: Long) = transaction {
+    override suspend fun delete(
+        userId: Long,
+        favFormId: Long
+    ) = transaction {
         FavoriteForms.deleteWhere { FavoriteForms.userId eq userId and (FavoriteForms.favFormId eq favFormId) }
         return@transaction
     }
 
-    override suspend fun deleteForForm(formId: Long) = transaction {
-        FavoriteForms.deleteWhere { FavoriteForms.favFormId eq formId }
-        return@transaction
-    }
+    override suspend fun deleteForForm(formId: Long) =
+        transaction {
+            FavoriteForms.deleteWhere { FavoriteForms.favFormId eq formId }
+            return@transaction
+        }
 }
-

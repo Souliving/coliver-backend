@@ -1,3 +1,3 @@
 package coliver.model
 
-annotation class NoArg()
+annotation class NoArg

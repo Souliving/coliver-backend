@@ -14,7 +14,7 @@ data class Image(
     var objectName: String
 )
 
-object Images: Table() {
+object Images : Table() {
     val id: Column<Long> = long("id").autoIncrement()
     val userId: Column<Long> = long("user_id")
     var bucketName: Column<String> = varchar("bucket_name", 255)

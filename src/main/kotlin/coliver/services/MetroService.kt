@@ -4,9 +4,10 @@ import coliver.dao.metro.MetroDAO
 import coliver.dto.MetroFormDto
 import coliver.model.Metro
 
-class MetroService(private val metroDAO: MetroDAO) {
-    suspend fun all(): List<Metro> =
-        metroDAO.getAll()
+class MetroService(
+    private val metroDAO: MetroDAO
+) {
+    suspend fun all(): List<Metro> = metroDAO.getAll()
 
     suspend fun getMetroById(metroId: Long) = metroDAO.getMetro(metroId)
 

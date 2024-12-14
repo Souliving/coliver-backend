@@ -11,7 +11,7 @@ data class City(
     var name: String,
 )
 
-object Cities: Table("city") {
+object Cities : Table("city") {
     var id = long("id").autoIncrement()
     var name: Column<String> = varchar("name", 64)
 }

@@ -12,37 +12,42 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class PropertyDAOImpl : PropertyDAO {
+    private fun resultRowToProperty(row: ResultRow) =
+        Property(
+            id = row[Properties.id],
+            smoking = row[Properties.smoking],
+            alcohol = row[Properties.alcohol],
+            petFriendly = row[Properties.petFriendly],
+            isClean = row[Properties.isClean],
+            homeOwnerId = row[Properties.homeOwnerId],
+        )
 
-    private fun resultRowToProperty(row: ResultRow) = Property(
-        id = row[Properties.id],
-        smoking = row[Properties.smoking],
-        alcohol = row[Properties.alcohol],
-        petFriendly = row[Properties.petFriendly],
-        isClean = row[Properties.isClean],
-        homeOwnerId = row[Properties.homeOwnerId],
-    )
+    override suspend fun delete(id: Long): Int =
+        dbQuery {
+            transaction {
+                Properties.deleteWhere { Properties.id eq id }
+            }
+        }
 
-    override suspend fun delete(id: Long): Int = dbQuery {
+    override suspend fun getById(id: Long): Property =
+        dbQuery {
+            Properties
+                .selectAll()
+                .where(Properties.id.eq(id))
+                .map(::resultRowToProperty)
+                .single()
+        }
+
+    override suspend fun create(dto: CreatePropertiesDto): Long =
         transaction {
-            Properties.deleteWhere { Properties.id eq id }
+            val propIns =
+                Properties.insert {
+                    it[smoking] = dto.smoking
+                    it[alcohol] = dto.alcohol
+                    it[petFriendly] = dto.petFriendly
+                    it[isClean] = dto.isClean
+                    it[homeOwnerId] = dto.homeOwnerId ?: 0
+                }
+            propIns.resultedValues?.singleOrNull()?.let { resultRowToProperty(it).id } ?: 0
         }
-    }
-
-    override suspend fun getById(id: Long): Property = dbQuery {
-        Properties.selectAll()
-            .where(Properties.id.eq(id))
-            .map(::resultRowToProperty)
-            .single()
-    }
-
-    override suspend fun create(dto: CreatePropertiesDto): Long = transaction {
-        val propIns = Properties.insert {
-            it[smoking] = dto.smoking
-            it[alcohol] = dto.alcohol
-            it[petFriendly] = dto.petFriendly
-            it[isClean] = dto.isClean
-            it[homeOwnerId] = dto.homeOwnerId ?: 0
-        }
-        propIns.resultedValues?.singleOrNull()?.let { resultRowToProperty(it).id } ?: 0
-    }
 }

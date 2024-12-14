@@ -10,7 +10,9 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.response.*
 
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+fun main(args: Array<String>): Unit =
+    io.ktor.server.netty.EngineMain
+        .main(args)
 
 fun Application.module() {
     install(CORS) {
@@ -33,11 +35,13 @@ fun Application.module() {
                     .require(Algorithm.HMAC256(secret))
                     .withAudience(audience)
                     .withIssuer(issuer)
-                    .build())
+                    .build(),
+            )
             validate { credential ->
-                if (credential.payload.getClaim("email").asString() != ""
+                if (credential.payload.getClaim("email").asString() != "" &&
 //                    && credential.payload.getClaim("role").asString() == "USER"
-                    && credential.payload.getClaim("refresh").isMissing) {
+                    credential.payload.getClaim("refresh").isMissing
+                ) {
                     JWTPrincipal(credential.payload)
                 } else {
                     null
@@ -54,7 +58,6 @@ fun Application.module() {
     configureMonitoring()
     configureRouting()
 }
-
 
 /*
 * val client = HttpClient(Apache5) {

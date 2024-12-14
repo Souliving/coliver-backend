@@ -6,14 +6,12 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
-
 fun Route.cityRouting() {
     val cityService by application.inject<CityService>()
 
     route("/cities", {
         tags("cities")
     }) {
-
         get("/") {
             call.respond(cityService.getAll())
         }

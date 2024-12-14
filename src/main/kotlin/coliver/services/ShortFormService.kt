@@ -23,7 +23,6 @@ class ShortFormService(
     private val favFormService: FavFormService,
     private val imageService: ImageService
 ) {
-
     suspend fun getAll(): List<ShortFormDto> {
         val allForms = shortFormDAO.getAll()
 
@@ -37,9 +36,10 @@ class ShortFormService(
         return allForms
     }
 
-    suspend fun getById(id: Long): ShortFormDto = shortFormDAO.getById(id)!!.apply {
-        this.imageLink = imageService.getImageLinkById(this.photoId!!)
-    }
+    suspend fun getById(id: Long): ShortFormDto =
+        shortFormDAO.getById(id)!!.apply {
+            this.imageLink = imageService.getImageLinkById(this.photoId!!)
+        }
 
     suspend fun getForUser(userId: Long): List<ShortFormDto> {
         val forms = shortFormDAO.getForUser(userId)
@@ -54,7 +54,10 @@ class ShortFormService(
         return forms
     }
 
-    suspend fun getWithFilter(userId: Long, filter: FilterDto): List<ShortFormDto> {
+    suspend fun getWithFilter(
+        userId: Long,
+        filter: FilterDto
+    ): List<ShortFormDto> {
         val filteredDao = shortFormDAO.getWithFilter(userId, filter)
 
         val ids = filteredDao.map { it.photoId ?: 0 }
@@ -97,20 +100,22 @@ class ShortFormService(
         shortFormDAO.delete(id)
     }
 
-    private suspend fun CreateFormDto.toForm() = Form(
-        userId = this.userId,
-        description = this.description,
-        rating = this.rating,
-        reviews = this.reviews,
-        photoId = this.photoId,
-        propertiesId = propertyService.create(this.properties),
-        cityId = this.cityId,
-        budget = this.budget,
-        dateMove = this.dateMove.toKotlinLocalDateTime(),
-        onlineDateTime = this.onlineDateTime.toKotlinLocalDateTime()
-    )
+    private suspend fun CreateFormDto.toForm() =
+        Form(
+            userId = this.userId,
+            description = this.description,
+            rating = this.rating,
+            reviews = this.reviews,
+            photoId = this.photoId,
+            propertiesId = propertyService.create(this.properties),
+            cityId = this.cityId,
+            budget = this.budget,
+            dateMove = this.dateMove.toKotlinLocalDateTime(),
+            onlineDateTime = this.onlineDateTime.toKotlinLocalDateTime(),
+        )
 }
 
-suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): Iterable<B> = coroutineScope {
-    map { async(Dispatchers.Loom) { f(it) } }.awaitAll()
-}
+suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): Iterable<B> =
+    coroutineScope {
+        map { async(Dispatchers.Loom) { f(it) } }.awaitAll()
+    }

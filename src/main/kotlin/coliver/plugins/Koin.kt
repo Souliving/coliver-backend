@@ -23,51 +23,60 @@ import io.ktor.server.application.*
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 
-val metroModule = module {
-    single<MetroDAO> { MetroDAOImpl() }
-    single { MetroService(get()) }
-}
+val metroModule =
+    module {
+        single<MetroDAO> { MetroDAOImpl() }
+        single { MetroService(get()) }
+    }
 
-val cityModule = module {
-    single<CityDAO> { CityDAOImpl() }
-    single { CityService(get()) }
-}
+val cityModule =
+    module {
+        single<CityDAO> { CityDAOImpl() }
+        single { CityService(get()) }
+    }
 
-val homeTypeModule = module {
-    single<HomeTypeDAO> { HomeTypeDAOImpl() }
-    single { HomeTypeService(get()) }
-}
+val homeTypeModule =
+    module {
+        single<HomeTypeDAO> { HomeTypeDAOImpl() }
+        single { HomeTypeService(get()) }
+    }
 
-val homeOwnerModule = module {
-    single<HomeOwnerDAO> { HomeOwnerDAOImpl() }
-    single { HomeOwnerService(get()) }
-}
+val homeOwnerModule =
+    module {
+        single<HomeOwnerDAO> { HomeOwnerDAOImpl() }
+        single { HomeOwnerService(get()) }
+    }
 
-val propertyModule = module {
-    single<PropertyDAO> { PropertyDAOImpl() }
-    single { PropertyService(get()) }
-}
+val propertyModule =
+    module {
+        single<PropertyDAO> { PropertyDAOImpl() }
+        single { PropertyService(get()) }
+    }
 
-val userModule = module {
-    single<UserDAO> { UserDAOImpl() }
-    single { UserService(get()) }
-}
+val userModule =
+    module {
+        single<UserDAO> { UserDAOImpl() }
+        single { UserService(get()) }
+    }
 
-val formModule = module {
-    single<FormDAO> { FormDAOImpl() }
-    single { FormService(get()) }
-}
+val formModule =
+    module {
+        single<FormDAO> { FormDAOImpl() }
+        single { FormService(get()) }
+    }
 
-val shortFormModule = module {
-    single<ShortFormDAO> { ShortFormDAOImpl() }
-    single<ImageService> { ImageService() }
-    single<ShortFormService> { ShortFormService(get(), get(), get(), get(), get(), get()) }
-}
+val shortFormModule =
+    module {
+        single<ShortFormDAO> { ShortFormDAOImpl() }
+        single<ImageService> { ImageService() }
+        single<ShortFormService> { ShortFormService(get(), get(), get(), get(), get(), get()) }
+    }
 
-val favFormModule = module {
-    single<FavFormDAO> { FavFormDAOImpl() }
-    single<FavFormService> { FavFormService(get(), get()) }
-}
+val favFormModule =
+    module {
+        single<FavFormDAO> { FavFormDAOImpl() }
+        single<FavFormService> { FavFormService(get(), get()) }
+    }
 
 fun Application.configureKoin() {
     install(Koin) {
@@ -81,8 +90,8 @@ fun Application.configureKoin() {
                 userModule,
                 formModule,
                 shortFormModule,
-                favFormModule
-            )
+                favFormModule,
+            ),
         )
     }
 }

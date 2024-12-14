@@ -12,7 +12,7 @@ data class Metro(
     var cityId: Long? = null,
 )
 
-object Metros: Table("metro") {
+object Metros : Table("metro") {
     val id = long("id").autoIncrement()
     var name: Column<String> = varchar("name", 64)
     var cityId: Column<Long> = long("city_id")

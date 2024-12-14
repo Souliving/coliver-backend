@@ -13,46 +13,59 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class MetroDAOImpl : MetroDAO {
+    private fun resultRowToMetro(row: ResultRow) =
+        Metro(
+            id = row[Metros.id],
+            name = row[Metros.name],
+            cityId = row[Metros.cityId],
+        )
 
-    private fun resultRowToMetro(row: ResultRow) = Metro(
-        id = row[Metros.id],
-        name = row[Metros.name],
-        cityId = row[Metros.cityId]
-    )
-
-    override suspend fun getAll(): List<Metro> = dbQuery {
-        Metros.selectAll().map(::resultRowToMetro)
-    }
-
-    override suspend fun getMetro(metroId: Long): Metro = dbQuery {
-        Metros.selectAll().where(Metros.id.eq(metroId)).map(::resultRowToMetro).single()
-    }
-
-    override suspend fun getMetroByCityId(cityId: Long): List<Metro> = dbQuery {
-        Metros.selectAll().where(Metros.cityId.eq(cityId)).map(::resultRowToMetro)
-    }
-
-    override suspend fun getMetroByName(metroName: String): Metro = dbQuery {
-        Metros.selectAll().where(Metros.name.eq(metroName)).map(::resultRowToMetro).single()
-    }
-
-    override suspend fun updateMetrosInForm(dto: MetroFormDto) = transaction {
-        FormMetroIds.deleteWhere {
-            formId eq dto.formId
+    override suspend fun getAll(): List<Metro> =
+        dbQuery {
+            Metros.selectAll().map(::resultRowToMetro)
         }
 
-        dto.metroIds.forEach { metro ->
-            FormMetroIds.insert {
-                it[formId] = dto.formId
-                it[metroId] = metro
+    override suspend fun getMetro(metroId: Long): Metro =
+        dbQuery {
+            Metros
+                .selectAll()
+                .where(Metros.id.eq(metroId))
+                .map(::resultRowToMetro)
+                .single()
+        }
+
+    override suspend fun getMetroByCityId(cityId: Long): List<Metro> =
+        dbQuery {
+            Metros.selectAll().where(Metros.cityId.eq(cityId)).map(::resultRowToMetro)
+        }
+
+    override suspend fun getMetroByName(metroName: String): Metro =
+        dbQuery {
+            Metros
+                .selectAll()
+                .where(Metros.name.eq(metroName))
+                .map(::resultRowToMetro)
+                .single()
+        }
+
+    override suspend fun updateMetrosInForm(dto: MetroFormDto) =
+        transaction {
+            FormMetroIds.deleteWhere {
+                formId eq dto.formId
             }
+
+            dto.metroIds.forEach { metro ->
+                FormMetroIds.insert {
+                    it[formId] = dto.formId
+                    it[metroId] = metro
+                }
+            }
+
+            return@transaction
         }
 
-        return@transaction
-    }
-
-    override suspend fun deleteMetroForForm(id: Long) = transaction {
-        return@transaction FormMetroIds.deleteWhere { formId eq id }
-    }
-
+    override suspend fun deleteMetroForForm(id: Long) =
+        transaction {
+            return@transaction FormMetroIds.deleteWhere { formId eq id }
+        }
 }

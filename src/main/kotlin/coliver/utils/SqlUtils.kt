@@ -14,32 +14,35 @@ fun <T : Any> String.execAndMap(transform: (ResultSet) -> T): List<T> {
     return result
 }
 
-fun String.exec(): Unit? {
-    return TransactionManager.current().exec(this)
-}
+fun String.exec(): Unit? = TransactionManager.current().exec(this)
 
-fun buildFilterRequest(userId: Long, filter: FilterDto): String {
-    val sqlString = "select * from" +
-        " get_short_forms_with_filter" +
-        "(${userId.buildSqlParameter()}," +
-        "${filter.price.startPrice?.buildSqlParameter()},${filter.price.endPrice?.buildSqlParameter()}," +
-        "${filter.age.startAge?.buildSqlParameter()}, ${filter.age.endAge?.buildSqlParameter()}," +
-        "${filter.cityId.buildSqlParameter()}, ${filter.metroIds.buildSqlParameter()}," +
-        " ${filter.smoking.buildSqlParameter()}, ${filter.alcohol.buildSqlParameter()}," +
-        " ${filter.petFriendly.buildSqlParameter()}, ${filter.isClean.buildSqlParameter()})"
+fun buildFilterRequest(
+    userId: Long,
+    filter: FilterDto
+): String {
+    val sqlString =
+        "select * from" +
+            " get_short_forms_with_filter" +
+            "(${userId.buildSqlParameter()}," +
+            "${filter.price.startPrice?.buildSqlParameter()},${filter.price.endPrice?.buildSqlParameter()}," +
+            "${filter.age.startAge?.buildSqlParameter()}, ${filter.age.endAge?.buildSqlParameter()}," +
+            "${filter.cityId.buildSqlParameter()}, ${filter.metroIds.buildSqlParameter()}," +
+            " ${filter.smoking.buildSqlParameter()}, ${filter.alcohol.buildSqlParameter()}," +
+            " ${filter.petFriendly.buildSqlParameter()}, ${filter.isClean.buildSqlParameter()})"
     return sqlString
 }
+
 fun buildFilterRequestWithoutId(filter: FilterDto): String {
-    val sqlString = "select * from" +
-        " get_short_forms_with_filter_without_user_id" +
-        "(${filter.price.startPrice?.buildSqlParameter()},${filter.price.endPrice?.buildSqlParameter()}," +
-        "${filter.age.startAge?.buildSqlParameter()}, ${filter.age.endAge?.buildSqlParameter()}," +
-        "${filter.cityId.buildSqlParameter()}, ${filter.metroIds.buildSqlParameter()}," +
-        " ${filter.smoking.buildSqlParameter()}, ${filter.alcohol.buildSqlParameter()}," +
-        " ${filter.petFriendly.buildSqlParameter()}, ${filter.isClean.buildSqlParameter()})"
+    val sqlString =
+        "select * from" +
+            " get_short_forms_with_filter_without_user_id" +
+            "(${filter.price.startPrice?.buildSqlParameter()},${filter.price.endPrice?.buildSqlParameter()}," +
+            "${filter.age.startAge?.buildSqlParameter()}, ${filter.age.endAge?.buildSqlParameter()}," +
+            "${filter.cityId.buildSqlParameter()}, ${filter.metroIds.buildSqlParameter()}," +
+            " ${filter.smoking.buildSqlParameter()}, ${filter.alcohol.buildSqlParameter()}," +
+            " ${filter.petFriendly.buildSqlParameter()}, ${filter.isClean.buildSqlParameter()})"
     return sqlString
 }
-
 
 private fun Number.buildSqlParameter(): String {
     if (this == null) {
@@ -58,11 +61,12 @@ private fun List<Number>.buildSqlParameter(): String {
     }
     var result = "array["
     this.forEach {
-        result += when (it) {
-            is Int -> "$it::int,"
-            is Long -> "$it::bigint,"
-            else -> "$it::int,"
-        }
+        result +=
+            when (it) {
+                is Int -> "$it::int,"
+                is Long -> "$it::bigint,"
+                else -> "$it::int,"
+            }
     }
     result = result.substring(0, result.length - 1)
     result = result.plus("]")
@@ -70,7 +74,8 @@ private fun List<Number>.buildSqlParameter(): String {
 }
 
 private fun Boolean?.buildSqlParameter(): String {
-    if (this == null)
+    if (this == null) {
         return "null"
+    }
     return this.toString()
 }

@@ -1,0 +1,10 @@
+root = true
+
+[*]
+trim_trailing_whitespace = false
+
+[*.{kt,kts}]
+ktlint_standard_no-wildcard-imports = disabled
+ktlint_standard_property-naming = disabled
+ktlint_standard_package-name = disabled
+ktlint_standard_trailing-comma-on-declaration-site = disabled

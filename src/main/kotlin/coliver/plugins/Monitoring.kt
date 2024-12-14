@@ -12,27 +12,29 @@ import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import java.time.Duration
 
 val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
-fun Application.configureMonitoring() {
 
+fun Application.configureMonitoring() {
     install(MicrometerMetrics) {
         registry = appMicrometerRegistry
-        distributionStatisticConfig = DistributionStatisticConfig.Builder()
-            .percentilesHistogram(true)
-            .maximumExpectedValue(Duration.ofSeconds(20).toNanos().toDouble())
-            .serviceLevelObjectives(
-                Duration.ofMillis(100).toNanos().toDouble(),
-                Duration.ofMillis(500).toNanos().toDouble()
+        distributionStatisticConfig =
+            DistributionStatisticConfig
+                .Builder()
+                .percentilesHistogram(true)
+                .maximumExpectedValue(Duration.ofSeconds(20).toNanos().toDouble())
+                .serviceLevelObjectives(
+                    Duration.ofMillis(100).toNanos().toDouble(),
+                    Duration.ofMillis(500).toNanos().toDouble(),
+                ).build()
+        meterBinders =
+            listOf(
+                ClassLoaderMetrics(),
+                JvmMemoryMetrics(),
+                JvmGcMetrics(),
+                ProcessorMetrics(),
+                JvmThreadMetrics(),
+                FileDescriptorMetrics(),
+                UptimeMetrics(),
+                JvmInfoMetrics(),
             )
-            .build()
-        meterBinders = listOf(
-            ClassLoaderMetrics(),
-            JvmMemoryMetrics(),
-            JvmGcMetrics(),
-            ProcessorMetrics(),
-            JvmThreadMetrics(),
-            FileDescriptorMetrics(),
-            UptimeMetrics(),
-            JvmInfoMetrics(),
-        )
     }
 }

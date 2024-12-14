@@ -6,18 +6,14 @@ import coliver.model.Gender
 import coliver.services.UserService
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-
 import io.github.smiley4.ktorswaggerui.dsl.routing.post
 import io.github.smiley4.ktorswaggerui.dsl.routing.route
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
-
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-
-
 import io.ktor.util.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -26,9 +22,8 @@ import java.security.SecureRandom
 import java.util.*
 
 fun Route.authRouting() {
-
-    //println(user.password)
-    //val hashed = BCrypt.with(SecureRandom()).hashToChar(10, dto.password.toCharArray());
+    // println(user.password)
+    // val hashed = BCrypt.with(SecureRandom()).hashToChar(10, dto.password.toCharArray());
 
     val userService by application.inject<UserService>()
 
@@ -36,38 +31,42 @@ fun Route.authRouting() {
     val issuer = environment.config.property("jwt.issuer").getString()
     val audience = environment.config.property("jwt.audience").getString()
 
-
     route("/auth", {
         tags("auth")
     }) {
         fun generateJwtPayload(jwt: JwtInfo): LoginAnswerDto {
-            val token = JWT.create()
-                .withAudience(audience)
-                .withIssuer(issuer)
-                .withClaim("email", jwt.email)
-                .withClaim("role", jwt.role)
-                .withExpiresAt(Date(System.currentTimeMillis() + 2 * 60 * 60000))
-                .sign(Algorithm.HMAC256(secret))
+            val token =
+                JWT
+                    .create()
+                    .withAudience(audience)
+                    .withIssuer(issuer)
+                    .withClaim("email", jwt.email)
+                    .withClaim("role", jwt.role)
+                    .withExpiresAt(Date(System.currentTimeMillis() + 2 * 60 * 60000))
+                    .sign(Algorithm.HMAC256(secret))
 
-            val refreshToken = JWT.create()
-                .withAudience(audience)
-                .withIssuer(issuer)
-                .withClaim("refresh", true)
-                .withClaim("email", jwt.email)
-                .withClaim("username", jwt.username)
-                .withClaim("role", jwt.role)
-                .withClaim("id", jwt.userId)
-                .withExpiresAt(Date(System.currentTimeMillis() + 24 * 60 * 60000))
-                .sign(Algorithm.HMAC256(secret))
+            val refreshToken =
+                JWT
+                    .create()
+                    .withAudience(audience)
+                    .withIssuer(issuer)
+                    .withClaim("refresh", true)
+                    .withClaim("email", jwt.email)
+                    .withClaim("username", jwt.username)
+                    .withClaim("role", jwt.role)
+                    .withClaim("id", jwt.userId)
+                    .withExpiresAt(Date(System.currentTimeMillis() + 24 * 60 * 60000))
+                    .sign(Algorithm.HMAC256(secret))
 
             return LoginAnswerDto(
                 email = jwt.email,
                 name = jwt.username,
-                jwt = JwtDto(
-                    userId = jwt.userId,
-                    token = token,
-                    refresh = refreshToken
-                )
+                jwt =
+                    JwtDto(
+                        userId = jwt.userId,
+                        token = token,
+                        refresh = refreshToken,
+                    ),
             )
         }
 
@@ -75,15 +74,15 @@ fun Route.authRouting() {
             request {
                 body<AuthDto> {
                     example("Login") {
-                        value = AuthDto(
-                            email = "email@gmail.com",
-                            password = "password"
-                        )
+                        value =
+                            AuthDto(
+                                email = "email@gmail.com",
+                                password = "password",
+                            )
                     }
                 }
             }
-        })
-        {
+        }) {
             val dto = call.receive<AuthDto>()
             val user = userService.getByEmail(dto.email)
 
@@ -91,7 +90,7 @@ fun Route.authRouting() {
                 call.response.status(HttpStatusCode.Unauthorized)
                 call.respondText(
                     Json.encodeToString(hashMapOf("error" to "Wrong email")),
-                    ContentType.Application.Json
+                    ContentType.Application.Json,
                 )
                 return@post
             }
@@ -102,18 +101,18 @@ fun Route.authRouting() {
                 call.respondText(
                     Json.encodeToString(hashMapOf("error" to "Wrong password")),
                     ContentType.Application.Json,
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 return@post
             }
-            val jwt = JwtInfo(
-                userId = user.id!!,
-                email = user.email,
-                username = user.name!!,
-                role = user.role.toString()
-            )
+            val jwt =
+                JwtInfo(
+                    userId = user.id!!,
+                    email = user.email,
+                    username = user.name!!,
+                    role = user.role.toString(),
+                )
             call.respond(HttpStatusCode.OK, generateJwtPayload(jwt))
-
         }
         authenticate("userAuth") {
             get("/page") {
@@ -128,15 +127,15 @@ fun Route.authRouting() {
             request {
                 body<RefreshTokenDto>()
             }
-        })
-        {
+        }) {
             val refresh = call.receive<RefreshTokenDto>().token
-            val verifier = JWT
-                .require(Algorithm.HMAC256(secret))
-                .withAudience(audience)
-                .withIssuer(issuer)
-                .withClaim("refresh", true)
-                .build()
+            val verifier =
+                JWT
+                    .require(Algorithm.HMAC256(secret))
+                    .withAudience(audience)
+                    .withIssuer(issuer)
+                    .withClaim("refresh", true)
+                    .build()
 
             val res = verifier.verify(refresh)
 
@@ -157,28 +156,26 @@ fun Route.authRouting() {
             request {
                 body<CreateUserDto> {
                     example("Register") {
-                        value = CreateUserDto(
-                            email = "email@gmail.com",
-                            password = "123456",
-                            name = "name",
-                            age = 21L,
-                            gender = Gender.MALE,
-                            phone = "8312312321"
-                        )
+                        value =
+                            CreateUserDto(
+                                email = "email@gmail.com",
+                                password = "123456",
+                                name = "name",
+                                age = 21L,
+                                gender = Gender.MALE,
+                                phone = "8312312321",
+                            )
                     }
                 }
             }
-        })
-        {
+        }) {
             val dto = call.receive<CreateUserDto>()
             dto.apply {
-                this.password = String(BCrypt.with(SecureRandom()).hashToChar(10, this.password.toCharArray()));
+                this.password = String(BCrypt.with(SecureRandom()).hashToChar(10, this.password.toCharArray()))
             }
             val id = userService.createUser(dto)
             id?.let { call.respond(HttpStatusCode.Created, id) }
                 ?: call.respond(HttpStatusCode.InternalServerError)
         }
-
     }
 }
-

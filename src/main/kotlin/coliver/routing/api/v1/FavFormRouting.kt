@@ -12,14 +12,11 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Route.favFormRouting() {
-
     val favFormService by application.inject<FavFormService>()
-
 
     route("/form", {
         tags("favForms")
     }) {
-
         get("/getFavoriteFormsByUserId/{userId}", {
             request {
                 queryParameter<Long>("userId")
@@ -47,5 +44,4 @@ fun Route.favFormRouting() {
             call.respond(favFormService.delete(fav.userId, fav.favFormId))
         }
     }
-
 }

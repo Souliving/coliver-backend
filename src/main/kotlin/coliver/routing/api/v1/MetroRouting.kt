@@ -12,7 +12,6 @@ fun Route.metroRouting() {
     route("/metro", {
         tags("metro")
     }) {
-
         get {
             call.respond(metroService.all())
         }

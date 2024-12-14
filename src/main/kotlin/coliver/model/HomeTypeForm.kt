@@ -8,7 +8,7 @@ data class HomeTypeForm(
     val homeTypeId: Long
 )
 
-object HomeTypeForms: Table("home_type_form") {
+object HomeTypeForms : Table("home_type_form") {
     var id = long("id").autoIncrement()
     var formId = long("form_id")
     var homeTypeId = long("home_type_id")

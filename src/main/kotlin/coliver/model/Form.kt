@@ -21,7 +21,7 @@ data class Form(
     val onlineDateTime: LocalDateTime
 )
 
-object Forms: Table("form") {
+object Forms : Table("form") {
     val id = long("id").autoIncrement()
     val userId = long("user_id")
     val description = text("description")

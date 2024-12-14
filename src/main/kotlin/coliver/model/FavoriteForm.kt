@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.Table
 
 @NoArg
 @Serializable
-data class FavoriteForm (
+data class FavoriteForm(
     var id: Long? = null,
     var userId: Long,
     var favFormId: Long,

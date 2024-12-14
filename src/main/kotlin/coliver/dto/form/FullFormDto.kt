@@ -7,7 +7,6 @@ import coliver.model.Property
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class FullFormDto(
     var id: Long? = null,
@@ -27,4 +26,3 @@ data class FullFormDto(
     var rating: Double,
     var reviews: List<String>
 )
-

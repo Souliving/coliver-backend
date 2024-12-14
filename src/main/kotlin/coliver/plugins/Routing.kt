@@ -53,7 +53,6 @@ fun Application.configureRouting() {
             swaggerUI("/api.json")
         }
 
-
         routing {
             get("/metrics") {
                 call.respond(appMicrometerRegistry.scrape())

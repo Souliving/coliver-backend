@@ -18,13 +18,11 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Route.shortFormRouting() {
-
     val shortFormService by application.inject<ShortFormService>()
 
     route("/form", {
         tags("shortForms")
     }) {
-
         get("/getShortForms") {
             call.respond(shortFormService.getAll())
         }
@@ -71,26 +69,28 @@ fun Route.shortFormRouting() {
             request {
                 body<CreateFormDto> {
                     example("Example CreateForm") {
-                        value = CreateFormDto(
-                            userId = 6,
-                            description = "Описание",
-                            homeTypesIds = listOf(1L, 2L),
-                            rating = 5.0,
-                            reviews = listOf("Yes"),
-                            photoId = 1,
-                            properties = CreatePropertiesDto(
-                                smoking = false,
-                                alcohol = false,
-                                isClean = false,
-                                petFriendly = false,
-                                homeOwnerId = null,
-                            ),
-                            cityId = 1,
-                            metroIds = listOf(1,2),
-                            budget = 50000L,
-                            dateMove = java.time.LocalDateTime.now(),
-                            onlineDateTime = java.time.LocalDateTime.now()
-                        )
+                        value =
+                            CreateFormDto(
+                                userId = 6,
+                                description = "Описание",
+                                homeTypesIds = listOf(1L, 2L),
+                                rating = 5.0,
+                                reviews = listOf("Yes"),
+                                photoId = 1,
+                                properties =
+                                    CreatePropertiesDto(
+                                        smoking = false,
+                                        alcohol = false,
+                                        isClean = false,
+                                        petFriendly = false,
+                                        homeOwnerId = null,
+                                    ),
+                                cityId = 1,
+                                metroIds = listOf(1, 2),
+                                budget = 50000L,
+                                dateMove = java.time.LocalDateTime.now(),
+                                onlineDateTime = java.time.LocalDateTime.now(),
+                            )
                     }
                 }
             }
@@ -125,21 +125,24 @@ private fun OpenApiRequest.filterParams() {
 
 private fun RoutingContext.parseQueryParams(): FilterDto {
     val filterParams = call.request.queryParameters
-    val dto = FilterDto(
-        price = PriceFilterDto(
-            startPrice = filterParams["startPrice"]?.toLong(),
-            endPrice = filterParams["endPrice"]?.toLong()
-        ),
-        age = AgeFilterDto(
-            startAge = filterParams["startAge"]?.toLong(),
-            endAge = filterParams["endAge"]?.toLong()
-        ),
-        cityId = filterParams["cityId"]?.split(",")?.map { it -> it.toLong() } ?: emptyList(),
-        metroIds = filterParams["metroIds"]?.split(",")?.map { it -> it.toLong() } ?: emptyList(),
-        smoking = filterParams["smoking"]?.toBoolean(),
-        alcohol = filterParams["alcohol"]?.toBoolean(),
-        petFriendly = filterParams["petFriendly"]?.toBoolean(),
-        isClean = filterParams["isClean"]?.toBoolean(),
-    )
+    val dto =
+        FilterDto(
+            price =
+                PriceFilterDto(
+                    startPrice = filterParams["startPrice"]?.toLong(),
+                    endPrice = filterParams["endPrice"]?.toLong(),
+                ),
+            age =
+                AgeFilterDto(
+                    startAge = filterParams["startAge"]?.toLong(),
+                    endAge = filterParams["endAge"]?.toLong(),
+                ),
+            cityId = filterParams["cityId"]?.split(",")?.map { it -> it.toLong() } ?: emptyList(),
+            metroIds = filterParams["metroIds"]?.split(",")?.map { it -> it.toLong() } ?: emptyList(),
+            smoking = filterParams["smoking"]?.toBoolean(),
+            alcohol = filterParams["alcohol"]?.toBoolean(),
+            petFriendly = filterParams["petFriendly"]?.toBoolean(),
+            isClean = filterParams["isClean"]?.toBoolean(),
+        )
     return dto
 }

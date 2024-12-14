@@ -1,6 +1,5 @@
 package coliver.dao.form.impl
 
-
 import coliver.dao.form.ShortFormDAO
 import coliver.database.DatabaseFactory.dbQuery
 import coliver.dto.form.FilterDto
@@ -17,65 +16,78 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class ShortFormDAOImpl : ShortFormDAO {
-
-    override suspend fun getAll(): List<ShortFormDto> = dbQuery {
-        getShortForms().map(::resultRowToShortForm)
-    }
-
-    override suspend fun getById(id: Long): ShortFormDto? = dbQuery {
-        getShortForms().where(Forms.id eq id).map(::resultRowToShortForm).firstOrNull()
-    }
-
-    override suspend fun getForUser(userId: Long): List<ShortFormDto> = dbQuery {
-        getShortFormsWithFav(userId).map(::resultRowToShortFormWithFavs)
-    }
-
-    override suspend fun getWithFilter(userId: Long, filterDto: FilterDto): List<ShortFormDto> = dbQuery {
-        val filteringSQl = filterSQL()
-
-        filteringSQl.andWhere { Forms.userId neq userId }
-
-        val ids = findForms(filterDto, filteringSQl)
-
-        val shortForms = getShortFormsWithFav(userId)
-
-        shortForms.andWhere { Forms.id eq anyFrom(ids) }.map(::resultRowToShortFormWithFavs)
-    }
-
-    override suspend fun getWithFilterWithoutId(filterDto: FilterDto): List<ShortFormDto> = dbQuery {
-        val filteringSQl = filterSQL()
-
-        val ids = findForms(filterDto, filteringSQl)
-
-        val shortForms = getShortForms()
-
-        shortForms.where { Forms.id eq anyFrom(ids) }.map(::resultRowToShortForm)
-    }
-
-    override suspend fun save(newForm: Form): Form = transaction {
-        val formIns = Forms.insert {
-            it[userId] = newForm.userId!!
-            it[description] = newForm.description
-            it[rating] = newForm.rating
-            it[dateMove] = newForm.dateMove
-            it[reviews] = newForm.reviews.toString()
-            it[photoId] = newForm.photoId!!
-            it[propertiesId] = newForm.propertiesId!!
-            it[cityId] = newForm.cityId!!
-            it[budget] = newForm.budget
-            it[dateMove] = newForm.dateMove
-            it[onlineDateTime] = newForm.onlineDateTime
+    override suspend fun getAll(): List<ShortFormDto> =
+        dbQuery {
+            getShortForms().map(::resultRowToShortForm)
         }
-        formIns.resultedValues?.singleOrNull()?.let { resultRowToFormDto(it) }!!
-    }
 
-    override suspend fun delete(id: Long) = dbQuery {
+    override suspend fun getById(id: Long): ShortFormDto? =
+        dbQuery {
+            getShortForms().where(Forms.id eq id).map(::resultRowToShortForm).firstOrNull()
+        }
+
+    override suspend fun getForUser(userId: Long): List<ShortFormDto> =
+        dbQuery {
+            getShortFormsWithFav(userId).map(::resultRowToShortFormWithFavs)
+        }
+
+    override suspend fun getWithFilter(
+        userId: Long,
+        filterDto: FilterDto
+    ): List<ShortFormDto> =
+        dbQuery {
+            val filteringSQl = filterSQL()
+
+            filteringSQl.andWhere { Forms.userId neq userId }
+
+            val ids = findForms(filterDto, filteringSQl)
+
+            val shortForms = getShortFormsWithFav(userId)
+
+            shortForms.andWhere { Forms.id eq anyFrom(ids) }.map(::resultRowToShortFormWithFavs)
+        }
+
+    override suspend fun getWithFilterWithoutId(filterDto: FilterDto): List<ShortFormDto> =
+        dbQuery {
+            val filteringSQl = filterSQL()
+
+            val ids = findForms(filterDto, filteringSQl)
+
+            val shortForms = getShortForms()
+
+            shortForms.where { Forms.id eq anyFrom(ids) }.map(::resultRowToShortForm)
+        }
+
+    override suspend fun save(newForm: Form): Form =
         transaction {
-            Forms.deleteWhere { Forms.id eq id }
+            val formIns =
+                Forms.insert {
+                    it[userId] = newForm.userId!!
+                    it[description] = newForm.description
+                    it[rating] = newForm.rating
+                    it[dateMove] = newForm.dateMove
+                    it[reviews] = newForm.reviews.toString()
+                    it[photoId] = newForm.photoId!!
+                    it[propertiesId] = newForm.propertiesId!!
+                    it[cityId] = newForm.cityId!!
+                    it[budget] = newForm.budget
+                    it[dateMove] = newForm.dateMove
+                    it[onlineDateTime] = newForm.onlineDateTime
+                }
+            formIns.resultedValues?.singleOrNull()?.let { resultRowToFormDto(it) }!!
         }
-    }
 
-    private fun findForms(filterDto: FilterDto, filteringSQl: Query): List<Long> {
+    override suspend fun delete(id: Long) =
+        dbQuery {
+            transaction {
+                Forms.deleteWhere { Forms.id eq id }
+            }
+        }
+
+    private fun findForms(
+        filterDto: FilterDto,
+        filteringSQl: Query
+    ): List<Long> {
         val fullFilterQuery = buildFilter(filterDto, filteringSQl)
 
         val ids = mutableListOf<Long>()
@@ -83,7 +95,10 @@ class ShortFormDAOImpl : ShortFormDAO {
         return ids
     }
 
-    private fun buildFilter(filterDto: FilterDto, filteringSQL: Query): Query {
+    private fun buildFilter(
+        filterDto: FilterDto,
+        filteringSQL: Query
+    ): Query {
         if (filterDto.cityId.isNotEmpty()) {
             filteringSQL.andWhere { Forms.cityId eq anyFrom(filterDto.cityId) }
         }
@@ -117,5 +132,3 @@ class ShortFormDAOImpl : ShortFormDAO {
         return filteringSQL
     }
 }
-
-
