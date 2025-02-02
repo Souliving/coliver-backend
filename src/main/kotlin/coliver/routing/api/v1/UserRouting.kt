@@ -9,7 +9,6 @@ import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.routing.get
 import org.koin.ktor.ext.inject
 
 fun Route.userRouting() {
@@ -35,8 +34,7 @@ fun Route.userRouting() {
         post("/fillUser/{id}", {
             request {
                 queryParameter<Long>("id")
-                body<FillUserDto> {
-                }
+                body<FillUserDto>()
             }
         }) {
             val id = call.parameters["id"]!!.toLong()

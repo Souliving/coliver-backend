@@ -59,7 +59,7 @@ class ImageService {
         val map = hashMapOf<Long, ImagePack>()
 
         paths.forEach {
-            map[it.id as Long] = ImagePack(it.bucketName, it.objectName)
+            map[it.id!!] = ImagePack(it.bucketName, it.objectName)
         }
 
         map.forEach { (id, pack) ->
