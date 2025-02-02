@@ -13,7 +13,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.toKotlinLocalDateTime
-import kotlin.collections.get
 
 class ShortFormService(
     private val shortFormDAO: ShortFormDAO,
@@ -26,12 +25,7 @@ class ShortFormService(
     suspend fun getAll(): List<ShortFormDto> {
         val allForms = shortFormDAO.getAll()
 
-        val ids = allForms.map { it.photoId ?: 0 }
-        val imgPack = imageService.getImageLinkPack(ids)
-
-        allForms.pmap {
-            it.imageLink = imgPack[it.photoId]?.imgLink ?: "not null"
-        }
+        loadImages(allForms)
 
         return allForms
     }
@@ -44,12 +38,7 @@ class ShortFormService(
     suspend fun getForUser(userId: Long): List<ShortFormDto> {
         val forms = shortFormDAO.getForUser(userId)
 
-        val ids = forms.map { it.photoId ?: 0 }
-        val imgPack = imageService.getImageLinkPack(ids)
-
-        forms.pmap {
-            it.imageLink = imgPack[it.photoId]?.imgLink ?: "not null"
-        }
+        loadImages(forms)
 
         return forms
     }
@@ -60,12 +49,7 @@ class ShortFormService(
     ): List<ShortFormDto> {
         val filteredDao = shortFormDAO.getWithFilter(userId, filter)
 
-        val ids = filteredDao.map { it.photoId ?: 0 }
-        val imgPack = imageService.getImageLinkPack(ids)
-
-        filteredDao.pmap {
-            it.imageLink = imgPack[it.photoId]?.imgLink ?: "not null"
-        }
+        loadImages(filteredDao)
 
         return filteredDao
     }
@@ -73,14 +57,18 @@ class ShortFormService(
     suspend fun getWithFilterWithoutId(filter: FilterDto): List<ShortFormDto> {
         val filteredDao = shortFormDAO.getWithFilterWithoutId(filter)
 
-        val ids = filteredDao.map { it.photoId ?: 0 }
-        val imgPack = imageService.getImageLinkPack(ids)
-
-        filteredDao.pmap {
-            it.imageLink = imgPack[it.photoId]?.imgLink ?: "not null"
-        }
+        loadImages(filteredDao)
 
         return filteredDao
+    }
+
+    private suspend fun loadImages(listDto: List<ShortFormDto>) {
+        val ids = listDto.map { it.photoId ?: 0 }
+        val imgPack = imageService.getImageLinkPack(ids)
+
+        listDto.pmap {
+            it.imageLink = imgPack[it.photoId]?.imgLink ?: "not null"
+        }
     }
 
     suspend fun createForm(dto: CreateFormDto): ShortFormDto {
