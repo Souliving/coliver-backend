@@ -30,6 +30,7 @@ class MetroDAOImpl : MetroDAO {
             Metros
                 .selectAll()
                 .where(Metros.id.eq(metroId))
+                .fetchSize(1)
                 .map(::resultRowToMetro)
                 .single()
         }
@@ -44,6 +45,7 @@ class MetroDAOImpl : MetroDAO {
             Metros
                 .selectAll()
                 .where(Metros.name.eq(metroName))
+                .fetchSize(1)
                 .map(::resultRowToMetro)
                 .single()
         }
