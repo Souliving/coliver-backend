@@ -1,8 +1,9 @@
 package coliver.routing.api.v1
 
 import coliver.services.MetroService
-import io.github.smiley4.ktorswaggerui.dsl.routing.route
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
+import io.github.smiley4.ktorswaggerui.dsl.routing.route
+import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -22,7 +23,8 @@ fun Route.metroRouting() {
                 queryParameter<Long>("metroId")
             }
         }) {
-            val metroId = call.parameters["metroId"]!!.toLong()
+            val metroId = call.parameters["metroId"]?.toLong()
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
             call.respond(metroService.getMetroById(metroId))
         }
 
@@ -31,7 +33,8 @@ fun Route.metroRouting() {
                 queryParameter<Long>("cityId")
             }
         }) {
-            val cityId = call.parameters["cityId"]!!.toLong()
+            val cityId = call.parameters["cityId"]?.toLong()
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
             call.respond(metroService.getMetroByCityId(cityId))
         }
 
@@ -40,7 +43,8 @@ fun Route.metroRouting() {
                 queryParameter<String>("name")
             }
         }) {
-            val metroName = call.parameters["name"]!!
+            val metroName = call.parameters["name"]
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
             call.respond(metroService.getMetroByName(metroName))
         }
     }

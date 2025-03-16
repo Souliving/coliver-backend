@@ -6,6 +6,7 @@ import io.github.smiley4.ktorswaggerui.dsl.routing.delete
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.dsl.routing.put
 import io.github.smiley4.ktorswaggerui.dsl.routing.route
+import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -22,7 +23,8 @@ fun Route.favFormRouting() {
                 queryParameter<Long>("userId")
             }
         }) {
-            val userId = call.parameters["userId"]!!.toLong()
+            val userId = call.parameters["userId"]?.toLong() 
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
             call.respond(favFormService.getFavForms(userId))
         }
 

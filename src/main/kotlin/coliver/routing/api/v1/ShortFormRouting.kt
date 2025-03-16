@@ -32,7 +32,8 @@ fun Route.shortFormRouting() {
                 queryParameter<Long>("id")
             }
         }) {
-            val id = call.parameters["id"]!!.toLong()
+            val id = call.parameters["id"]?.toLong()
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
             call.respond(shortFormService.getById(id))
         }
 
@@ -41,7 +42,8 @@ fun Route.shortFormRouting() {
                 queryParameter<Long>("userId")
             }
         }) {
-            val userId = call.parameters["userId"]!!.toLong()
+            val userId = call.parameters["userId"]?.toLong()
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
             call.respond(shortFormService.getForUser(userId))
         }
 
@@ -51,7 +53,8 @@ fun Route.shortFormRouting() {
                 filterParams()
             }
         }) {
-            val userId = call.parameters["userId"]!!.toLong()
+            val userId = call.parameters["userId"]?.toLong()
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
             val filter = parseQueryParams()
             call.respond(shortFormService.getWithFilter(userId, filter))
         }
@@ -104,7 +107,8 @@ fun Route.shortFormRouting() {
                 queryParameter<Long>("formId")
             }
         }) {
-            val formId = call.parameters["formId"]!!.toLong()
+            val formId = call.parameters["formId"]?.toLong()
+                ?: return@delete call.respond(HttpStatusCode.BadRequest)
             call.respond(HttpStatusCode.OK, shortFormService.deleteForm(formId))
         }
     }

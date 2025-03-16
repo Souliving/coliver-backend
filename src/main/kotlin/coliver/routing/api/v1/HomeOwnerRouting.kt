@@ -27,6 +27,9 @@ fun Route.homeOwnerRouting() {
             }
         }) {
             val id = call.parameters["id"]?.toLong()!!
+        get("/{id}") {
+            val id = call.parameters["id"]?.toLong()
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
             call.respond(homeOwnerService.getById(id))
         }
 
@@ -35,7 +38,8 @@ fun Route.homeOwnerRouting() {
                 queryParameter<Long>("homeTypeId")
             }
         }) {
-            val id = call.parameters["homeTypeId"]?.toLong()!!
+            val id = call.parameters["homeTypeId"]?.toLong()
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
             call.respond(homeOwnerService.getByHomeTypes(id))
         }
 

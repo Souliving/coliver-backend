@@ -139,10 +139,14 @@ fun Route.authRouting() {
 
             val res = verifier.verify(refresh)
 
-            val email = res.claims["email"]!!.asString()
-            val username = res.claims["username"]!!.asString()
-            val userId = res.claims["id"]!!.asLong()
-            val role = res.claims["role"]!!.asString()
+            val email = res.claims["email"]?.asString()
+                ?: return@post call.respond(HttpStatusCode.BadRequest)
+            val username = res.claims["username"]?.asString()
+                ?: return@post call.respond(HttpStatusCode.BadRequest)
+            val userId = res.claims["id"]?.asLong()
+                ?: return@post call.respond(HttpStatusCode.BadRequest)
+            val role = res.claims["role"]?.asString()
+                ?: return@post call.respond(HttpStatusCode.BadRequest)
 
             val jwt = JwtInfo(userId, email, username, role)
             if (res != null) {

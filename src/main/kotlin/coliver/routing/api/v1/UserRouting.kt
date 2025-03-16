@@ -26,7 +26,8 @@ fun Route.userRouting() {
                 queryParameter<Long>("id")
             }
         }) {
-            val id = call.parameters["id"]!!.toLong()
+            val id = call.parameters["id"]?.toLong()
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
             val user = userService.getById(id)
             call.respond(user)
         }
@@ -37,7 +38,8 @@ fun Route.userRouting() {
                 body<FillUserDto>()
             }
         }) {
-            val id = call.parameters["id"]!!.toLong()
+            val id = call.parameters["id"]?.toLong()
+                ?: return@post call.respond(HttpStatusCode.BadRequest)
             val dto = call.receive<FillUserDto>()
             call.respond(HttpStatusCode.OK, userService.fillUser(id, dto))
         }
