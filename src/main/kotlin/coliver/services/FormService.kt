@@ -14,10 +14,18 @@ class FormService(
 
     suspend fun getByUserId(userId: Long): List<FormDto> = formDAO.getByUserId(userId)
 
-    suspend fun getFullFormById(id: Long): List<FullFormDto> =
-        formDAO.getFullFormById(id).apply {
-            this.forEach { form ->
-                form.imageLink = imageService.getImageLinkById(form.photoId!!)
-            }
+    suspend fun getFullFormById(id: Long): List<FullFormDto> {
+        val forms = formDAO.getFullFormById(id)
+        loadImages(forms)
+        return forms
+    }
+
+    private suspend fun loadImages(listDto: List<FullFormDto>) {
+        val ids = listDto.map { it.photoId ?: 0 }
+        val imgPack = imageService.getImageLinkPack(ids)
+
+        listDto.pmap {
+            it.imageLink = imgPack[it.photoId]?.imgLink ?: "not null"
         }
+    }
 }
