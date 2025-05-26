@@ -24,5 +24,6 @@ data class FullFormDto(
     var homeType: List<HomeType>? = null,
     var socialMediaIds: List<Long>? = null,
     var rating: Double,
-    var reviews: List<String>
+    var reviews: List<String>,
+    var imageLink: String? = null,
 )

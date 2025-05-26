@@ -62,7 +62,7 @@ val userModule =
 val formModule =
     module {
         single<FormDAO> { FormDAOImpl() }
-        single { FormService(get()) }
+        single { FormService(get(), get()) }
     }
 
 val shortFormModule =
