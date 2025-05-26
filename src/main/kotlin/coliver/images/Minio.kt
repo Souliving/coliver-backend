@@ -66,7 +66,7 @@ val okHttpClient =
         .build()
 
 private fun createDispatcher(): Dispatcher {
-    val dispatcher = Dispatcher(Executors.newCachedThreadPool())
+    val dispatcher = Dispatcher(Executors.newVirtualThreadPerTaskExecutor())
     dispatcher.maxRequests = 30000
     dispatcher.maxRequestsPerHost = 10000
     return dispatcher
