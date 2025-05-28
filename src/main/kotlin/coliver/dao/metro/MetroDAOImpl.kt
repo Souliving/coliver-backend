@@ -51,7 +51,7 @@ class MetroDAOImpl : MetroDAO {
         }
 
     override suspend fun updateMetrosInForm(dto: MetroFormDto) =
-        transaction {
+        dbQuery {
             FormMetroIds.deleteWhere {
                 formId eq dto.formId
             }
@@ -63,11 +63,11 @@ class MetroDAOImpl : MetroDAO {
                 }
             }
 
-            return@transaction
+            return@dbQuery
         }
 
     override suspend fun deleteMetroForForm(id: Long) =
-        transaction {
-            return@transaction FormMetroIds.deleteWhere { formId eq id }
+        dbQuery {
+            return@dbQuery FormMetroIds.deleteWhere { formId eq id }
         }
 }

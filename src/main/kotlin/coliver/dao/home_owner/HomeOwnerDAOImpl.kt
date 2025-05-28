@@ -41,7 +41,7 @@ class HomeOwnerDAOImpl : HomeOwnerDAO {
         }
 
     override suspend fun insert(homeOwner: CreateHomeOwnerDto): Long =
-        transaction {
+        dbQuery {
             val ins =
                 HomeOwners.insert {
                     it[metroId] = homeOwner.metroId!!

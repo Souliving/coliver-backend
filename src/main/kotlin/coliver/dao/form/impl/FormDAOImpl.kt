@@ -1,6 +1,7 @@
 package coliver.dao.form.impl
 
 import coliver.dao.form.FormDAO
+import coliver.database.DatabaseFactory.dbQuery
 import coliver.dto.form.FormDto
 import coliver.dto.form.FullFormDto
 import coliver.dto.form.ShortFormDto
@@ -57,25 +58,25 @@ class FormDAOImpl : FormDAO {
         )
 
     override suspend fun getAll(): List<FormDto> =
-        transaction {
+        dbQuery {
             val sql = "select * from get_forms()"
             getFormsWithSQL(sql)
         }
 
     override suspend fun getById(id: Long): List<FormDto> =
-        transaction {
+        dbQuery {
             val sql = "select * from get_forms_by_form_id($id)"
             getFormsWithSQL(sql)
         }
 
     override suspend fun getByUserId(userId: Long): List<FormDto> =
-        transaction {
+        dbQuery {
             val sql = "select * from get_forms_by_user_id($userId)"
             getFormsWithSQL(sql)
         }
 
     override suspend fun getFullFormById(id: Long): List<FullFormDto> =
-        transaction {
+        dbQuery {
             val sql = "select * from get_full_forms_by_form_id($id)"
             val result = mutableListOf<FullFormDto>()
             sql.execAndMap { rs ->

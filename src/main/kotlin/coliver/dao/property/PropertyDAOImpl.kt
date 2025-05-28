@@ -24,9 +24,7 @@ class PropertyDAOImpl : PropertyDAO {
 
     override suspend fun delete(id: Long): Int =
         dbQuery {
-            transaction {
-                Properties.deleteWhere { Properties.id eq id }
-            }
+            Properties.deleteWhere { Properties.id eq id }
         }
 
     override suspend fun getById(id: Long): Property =
@@ -39,7 +37,7 @@ class PropertyDAOImpl : PropertyDAO {
         }
 
     override suspend fun create(dto: CreatePropertiesDto): Long =
-        transaction {
+        dbQuery {
             val propIns =
                 Properties.insert {
                     it[smoking] = dto.smoking

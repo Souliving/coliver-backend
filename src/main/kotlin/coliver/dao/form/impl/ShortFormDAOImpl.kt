@@ -13,7 +13,6 @@ import coliver.utils.resultRowToShortForm
 import coliver.utils.resultRowToShortFormWithFavs
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class ShortFormDAOImpl : ShortFormDAO {
     override suspend fun getAll(): List<ShortFormDto> =
@@ -59,7 +58,7 @@ class ShortFormDAOImpl : ShortFormDAO {
         }
 
     override suspend fun save(newForm: Form): Form =
-        transaction {
+        dbQuery {
             val formIns =
                 Forms.insert {
                     it[userId] = newForm.userId!!
@@ -79,9 +78,7 @@ class ShortFormDAOImpl : ShortFormDAO {
 
     override suspend fun delete(id: Long) =
         dbQuery {
-            transaction {
-                Forms.deleteWhere { Forms.id eq id }
-            }
+            Forms.deleteWhere { Forms.id eq id }
         }
 
     private fun findForms(

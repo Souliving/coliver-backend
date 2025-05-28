@@ -34,18 +34,18 @@ class HomeTypeDAOImpl : HomeTypeDAO {
         }
 
     override suspend fun updateForForm(dto: HomeTypeFormDto) =
-        transaction {
+        dbQuery {
             dto.homeTypeIds.forEach { homeType ->
                 HomeTypeForms.insert {
                     it[formId] = dto.formId
                     it[homeTypeId] = homeType
                 }
             }
-            return@transaction
+            return@dbQuery
         }
 
     override suspend fun deleteForForm(id: Long) =
-        transaction {
-            return@transaction HomeTypeForms.deleteWhere { HomeTypes.id eq id }
+        dbQuery {
+            return@dbQuery HomeTypeForms.deleteWhere { HomeTypes.id eq id }
         }
 }

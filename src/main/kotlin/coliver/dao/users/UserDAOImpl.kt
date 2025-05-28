@@ -53,18 +53,17 @@ class UserDAOImpl : UserDAO {
         user: FillUserDto
     ): Int =
         dbQuery {
-            transaction {
                 Users.update({ Users.id eq id }) {
                     it[name] = user.name
                     it[email] = user.email
                     it[age] = user.age
                     it[gender] = user.gender.toString()
                 }
-            }
+            
         }
 
     override suspend fun getLkById(id: Long): LkInfoDto =
-        transaction {
+        dbQuery {
             val procedure = "select * from get_lk_info_for_user_id($id)"
             val lkInfoDto = LkInfoDto(0, "", listOf())
             procedure.execAndMap { rs ->
@@ -85,7 +84,7 @@ class UserDAOImpl : UserDAO {
         }
 
     override suspend fun createUser(dto: CreateUserDto): Long? =
-        transaction {
+        dbQuery {
             val userInsert =
                 Users.insert {
                     it[email] = dto.email

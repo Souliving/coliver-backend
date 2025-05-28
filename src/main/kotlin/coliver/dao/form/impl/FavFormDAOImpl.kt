@@ -8,7 +8,6 @@ import coliver.utils.getFavShortForms
 import coliver.utils.resultRowToShortFormWithFavs
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class FavFormDAOImpl : FavFormDAO {
     override suspend fun getByUserId(userId: Long): List<ShortFormDto> =
@@ -19,25 +18,25 @@ class FavFormDAOImpl : FavFormDAO {
     override suspend fun add(
         userId: Long,
         favFormId: Long
-    ) = transaction {
+    ) = dbQuery {
         FavoriteForms.insert {
             it[FavoriteForms.userId] = userId
             it[FavoriteForms.favFormId] = favFormId
         }
-        return@transaction
+        return@dbQuery
     }
 
     override suspend fun delete(
         userId: Long,
         favFormId: Long
-    ) = transaction {
+    ) = dbQuery {
         FavoriteForms.deleteWhere { FavoriteForms.userId eq userId and (FavoriteForms.favFormId eq favFormId) }
-        return@transaction
+        return@dbQuery
     }
 
     override suspend fun deleteForForm(formId: Long) =
-        transaction {
+        dbQuery {
             FavoriteForms.deleteWhere { FavoriteForms.favFormId eq formId }
-            return@transaction
+            return@dbQuery
         }
 }
