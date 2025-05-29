@@ -1,4 +1,4 @@
-package coliver.images
+package coliver.model
 
 import coliver.model.NoArg
 import kotlinx.serialization.Serializable

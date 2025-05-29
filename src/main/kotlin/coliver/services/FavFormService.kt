@@ -10,10 +10,10 @@ class FavFormService(
     suspend fun getFavForms(userId: Long): List<ShortFormDto> {
         val favForms = favFormDAO.getByUserId(userId)
         val ids = favForms.map { it.photoId ?: 0 }
-        val imgLinks = imageService.getLinksForIds(ids)
+        val imgLinks = imageService.getImageLinkPack(ids)
 
         favForms.map { it ->
-            it.imageLink = imgLinks[it.photoId]
+            it.imageLink = imgLinks[it.photoId]?.imgLink ?: "empty image link"
         }
         return favForms
     }

@@ -1,54 +1,33 @@
 package coliver.services
 
+import coliver.dao.images.ImageDAO
 import coliver.dto.ImagePack
-import coliver.images.imageDAO
+import coliver.images.getImgName
 import coliver.images.minio
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.apache5.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder
+import coliver.model.Image
+import com.google.common.io.ByteSource
 
-class ImageService {
-    private val imageAPI = "http://94.103.89.23:9090"
-
-    private val client =
-        HttpClient(Apache5) {
-            engine {
-                connectTimeout = 10_000
-                connectionRequestTimeout = 20_000
-                customizeClient {
-                    setConnectionManager(
-                        PoolingAsyncClientConnectionManagerBuilder
-                            .create()
-                            .setMaxConnTotal(10_000)
-                            .setMaxConnPerRoute(500)
-                            .build(),
-                    )
-                }
-            }
-            install(ContentNegotiation) {
-                json()
-            }
-        }
-
-    suspend fun getImageLinkByIdByWeb(id: Long): String {
-        val extraPath = "getImageById/$id"
-        val link = client.get("$imageAPI/$extraPath").body<String>()
-        return link
-    }
-
-    suspend fun getImageLinkById(id: Long): String {
-        val paths = imageDAO.getImagesById(id)
+class ImageService(
+    private val imageDAO: ImageDAO,
+) {
+    suspend fun getImageByUserId(userId: Long): String? {
+        val paths = imageDAO.getImagesByUserId(userId)
         if (paths.isEmpty()) {
-            return "not found"
+            return null
         }
         val info = paths.first()
         val imgUrl = minio.getPresignedUrl(info.bucketName, info.objectName)
-        return imgUrl ?: "not found"
+        return imgUrl
+    }
+
+    suspend fun getImageLinkById(id: Long): String? {
+        val paths = imageDAO.getImagesById(id)
+        if (paths.isEmpty()) {
+            return null
+        }
+        val info = paths.first()
+        val imgUrl = minio.getPresignedUrl(info.bucketName, info.objectName)
+        return imgUrl
     }
 
     suspend fun getImageLinkPack(ids: List<Long>): HashMap<Long, ImagePack> {
@@ -68,14 +47,21 @@ class ImageService {
         return map
     }
 
-    suspend fun getLinksForIds(ids: List<Long>): HashMap<Long, String> {
-        val extraPath = "assembleImgLinks"
-        val links =
-            client
-                .post("$imageAPI/$extraPath") {
-                    contentType(ContentType.Application.Json)
-                    setBody(ids)
-                }.body<HashMap<Long, String>>()
-        return links
+    suspend fun uploadImageByUserId(
+        img: ByteArray,
+        userId: Long
+    ): Long? {
+        val imgName = getImgName("jpg")
+        val imgId =
+            imageDAO.addImage(
+                Image(
+                    userId = userId,
+                    bucketName = "images",
+                    objectName = imgName,
+                ),
+            )
+        val stream = ByteSource.wrap(img).openStream()
+        minio.putObject("images", imgName, stream)
+        return imgId
     }
 }

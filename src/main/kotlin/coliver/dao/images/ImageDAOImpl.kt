@@ -1,11 +1,18 @@
-package coliver.images
+package coliver.dao.images
 
 import coliver.database.DatabaseFactory.dbQuery
-import kotlinx.coroutines.runBlocking
+import coliver.model.Image
+import coliver.model.Images
+import coliver.model.Images.bucketName
+import coliver.model.Images.objectName
+import coliver.model.Images.userId
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 
-class ImagesDaoImpl : ImagesDAO {
+class ImageDAOImpl : ImageDAO {
     private fun resultRowToImage(row: ResultRow) =
         Image(
             id = row[Images.id],
@@ -28,14 +35,20 @@ class ImagesDaoImpl : ImagesDAO {
         dbQuery {
             Images.selectAll().where { Images.id inList ids }.map(::resultRowToImage)
         }
-}
 
-val imageDAO: ImagesDAO =
-    ImagesDaoImpl().apply {
-        runBlocking {
-//        if (allImages().isEmpty()) {
-//            val image = Image( userId = 2, bucketName = "images", objectName = "Жопа.jpg")
-//            addImage(image)
-//        }
+    override suspend fun addImage(image: Image): Long? =
+        dbQuery {
+            val insertStatement =
+                Images.insert {
+                    it[userId] = image.userId
+                    it[bucketName] = image.bucketName
+                    it[objectName] = image.objectName
+                }
+            insertStatement.resultedValues?.singleOrNull()?.let { resultRowToImage(it).id }
         }
-    }
+
+    override suspend fun deleteImageById(id: Long): Boolean =
+        dbQuery {
+            Images.deleteWhere { Images.id eq id } != 0
+        }
+}

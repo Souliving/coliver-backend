@@ -12,6 +12,8 @@ import coliver.dao.home_owner.HomeOwnerDAO
 import coliver.dao.home_owner.HomeOwnerDAOImpl
 import coliver.dao.home_type.HomeTypeDAO
 import coliver.dao.home_type.HomeTypeDAOImpl
+import coliver.dao.images.ImageDAO
+import coliver.dao.images.ImageDAOImpl
 import coliver.dao.metro.MetroDAO
 import coliver.dao.metro.MetroDAOImpl
 import coliver.dao.property.PropertyDAO
@@ -68,7 +70,7 @@ val formModule =
 val shortFormModule =
     module {
         single<ShortFormDAO> { ShortFormDAOImpl() }
-        single<ImageService> { ImageService() }
+        single<ImageService> { ImageService(get()) }
         single<ShortFormService> { ShortFormService(get(), get(), get(), get(), get(), get()) }
     }
 
@@ -76,6 +78,12 @@ val favFormModule =
     module {
         single<FavFormDAO> { FavFormDAOImpl() }
         single<FavFormService> { FavFormService(get(), get()) }
+    }
+
+val imageModule =
+    module {
+        single<ImageDAO> { ImageDAOImpl() }
+        single<ImageService> { ImageService(get()) }
     }
 
 fun Application.configureKoin() {
@@ -91,6 +99,7 @@ fun Application.configureKoin() {
                 formModule,
                 shortFormModule,
                 favFormModule,
+                imageModule,
             ),
         )
     }
