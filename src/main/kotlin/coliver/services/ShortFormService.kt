@@ -13,6 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.toKotlinLocalDateTime
+import kotlin.time.measureTime
 
 class ShortFormService(
     private val shortFormDAO: ShortFormDAO,
@@ -23,7 +24,7 @@ class ShortFormService(
     private val imageService: ImageService
 ) {
     suspend fun getAll(): List<ShortFormDto> {
-        val allForms = shortFormDAO.getAll()
+        val allForms: List<ShortFormDto> = shortFormDAO.getAll()
 
         loadImages(allForms)
 

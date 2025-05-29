@@ -5,6 +5,7 @@ import coliver.dto.ImagePack
 import coliver.images.getImgName
 import coliver.images.minio
 import coliver.model.Image
+import coliver.plugins.imgCaffeine
 import com.google.common.io.ByteSource
 
 class ImageService(
@@ -16,25 +17,47 @@ class ImageService(
             return null
         }
         val info = paths.first()
+        val cachedImgLink = imgCaffeine.getIfPresent(info.id!!)
+        if (cachedImgLink != null) {
+            return cachedImgLink
+        }
         val imgUrl = minio.getPresignedUrl(info.bucketName, info.objectName)
+        imgCaffeine.put(info.id!!, imgUrl)
         return imgUrl
     }
 
     suspend fun getImageLinkById(id: Long): String? {
+        val cachedImgLink = imgCaffeine.getIfPresent(id)
+        if (cachedImgLink != null) {
+            return cachedImgLink
+        }
         val paths = imageDAO.getImagesById(id)
         if (paths.isEmpty()) {
             return null
         }
         val info = paths.first()
         val imgUrl = minio.getPresignedUrl(info.bucketName, info.objectName)
+        imgCaffeine.put(id, imgUrl)
         return imgUrl
     }
 
     suspend fun getImageLinkPack(ids: List<Long>): HashMap<Long, ImagePack> {
-        val paths = imageDAO.getPackedImagesByIds(ids)
-        if (paths.isEmpty()) {
-            return hashMapOf()
+        val cachedImgLinks = hashMapOf<Long, ImagePack>()
+        val nonCachedIds = arrayListOf<Long>()
+        ids.forEach { id ->
+            val imgLink = imgCaffeine.getIfPresent(id)
+            if (imgLink != null) {
+                cachedImgLinks[id] = ImagePack("", "", imgLink)
+            } else {
+                nonCachedIds.add(id)
+            }
         }
+
+        if (nonCachedIds.isEmpty()) {
+            return cachedImgLinks
+        }
+
+        val paths = imageDAO.getPackedImagesByIds(nonCachedIds)
         val map = hashMapOf<Long, ImagePack>()
 
         paths.forEach {
@@ -42,7 +65,9 @@ class ImageService(
         }
 
         map.forEach { (id, pack) ->
-            pack.imgLink = minio.getPresignedUrl(pack.bucketName, pack.objectName)
+            val newImgLink = minio.getPresignedUrl(pack.bucketName, pack.objectName)
+            pack.imgLink = newImgLink
+            imgCaffeine.put(id, newImgLink!!)
         }
         return map
     }
