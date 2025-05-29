@@ -2,7 +2,6 @@ package coliver.dao.images
 
 import coliver.model.Image
 
-
 interface ImageDAO {
     suspend fun getImagesByUserId(userId: Long): List<Image>
 

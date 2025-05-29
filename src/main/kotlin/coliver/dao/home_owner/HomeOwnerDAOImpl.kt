@@ -8,7 +8,6 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class HomeOwnerDAOImpl : HomeOwnerDAO {
     private fun resultRowToHomeOwner(row: ResultRow) =

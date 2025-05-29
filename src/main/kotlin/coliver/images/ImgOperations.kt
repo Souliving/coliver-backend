@@ -1,11 +1,8 @@
 package coliver.images
 
-
 import java.util.*
 
-fun getImgName(format: String): String {
-    return "${generateRandomString(30)}.$format"
-}
+fun getImgName(format: String): String = "${generateRandomString(30)}.$format"
 
 fun generateRandomString(
     length: Int = 20,

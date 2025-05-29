@@ -14,7 +14,6 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.sql.Array
 import java.time.LocalDateTime
@@ -53,13 +52,12 @@ class UserDAOImpl : UserDAO {
         user: FillUserDto
     ): Int =
         dbQuery {
-                Users.update({ Users.id eq id }) {
-                    it[name] = user.name
-                    it[email] = user.email
-                    it[age] = user.age
-                    it[gender] = user.gender.toString()
-                }
-            
+            Users.update({ Users.id eq id }) {
+                it[name] = user.name
+                it[email] = user.email
+                it[age] = user.age
+                it[gender] = user.gender.toString()
+            }
         }
 
     override suspend fun getLkById(id: Long): LkInfoDto =

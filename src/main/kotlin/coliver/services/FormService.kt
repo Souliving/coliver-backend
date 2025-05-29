@@ -14,9 +14,10 @@ class FormService(
 
     suspend fun getByUserId(userId: Long): List<FormDto> = formDAO.getByUserId(userId)
 
-    suspend fun getFullFormById(id: Long): List<FullFormDto> = formDAO.getFullFormById(id).apply { 
-        this.forEach { form->
-            form.imageLink = imageService.getImageLinkById(form.photoId!!)
+    suspend fun getFullFormById(id: Long): List<FullFormDto> =
+        formDAO.getFullFormById(id).apply {
+            this.forEach { form ->
+                form.imageLink = imageService.getImageLinkById(form.photoId!!)
+            }
         }
-    }
 }
