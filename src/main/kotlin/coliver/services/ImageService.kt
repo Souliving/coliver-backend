@@ -17,29 +17,19 @@ class ImageService(
             return null
         }
         val info = paths.first()
-        val cachedImgLink = imgCaffeine.getIfPresent(info.id!!)
-        if (cachedImgLink != null) {
-            return cachedImgLink
+        return imgCaffeine.get(info.id!!) {
+            val imgUrl = minio.getPresignedUrl(info.bucketName, info.objectName)
+            imgUrl ?: "not found"
         }
-        val imgUrl = minio.getPresignedUrl(info.bucketName, info.objectName)
-        imgCaffeine.put(info.id!!, imgUrl)
-        return imgUrl
     }
 
-    suspend fun getImageLinkById(id: Long): String? {
-        val cachedImgLink = imgCaffeine.getIfPresent(id)
-        if (cachedImgLink != null) {
-            return cachedImgLink
+    suspend fun getImageLinkById(id: Long): String? =
+        imgCaffeine.get(id) {
+            val paths = imageDAO.getImagesById(id)
+            val info = paths.first()
+            val imgUrl: String? = minio.getPresignedUrl(info.bucketName, info.objectName)
+            imgUrl ?: "not found"
         }
-        val paths = imageDAO.getImagesById(id)
-        if (paths.isEmpty()) {
-            return null
-        }
-        val info = paths.first()
-        val imgUrl = minio.getPresignedUrl(info.bucketName, info.objectName)
-        imgCaffeine.put(id, imgUrl)
-        return imgUrl
-    }
 
     suspend fun getImageLinkPack(ids: List<Long>): HashMap<Long, ImagePack> {
         val cachedImgLinks = hashMapOf<Long, ImagePack>()

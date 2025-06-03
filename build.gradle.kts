@@ -65,7 +65,7 @@ dependencies {
     implementation("io.ktor:ktor-client-jetty:3.0.0")
     implementation("io.ktor:ktor-server-metrics-micrometer:$ktor_version")
     implementation("io.micrometer:micrometer-registry-prometheus:1.13.6")
-    implementation("com.github.ben-manes.caffeine:caffeine:3.2.0") // последнюю версию можешь уточнить
+    implementation("com.sksamuel.aedile:aedile-core:2.1.2") // последнюю версию можешь уточнить
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
