@@ -2,11 +2,16 @@ package coliver.routing.api.v1
 
 import coliver.services.ImageService
 import io.github.smiley4.ktorswaggerui.dsl.routing.route
+import io.github.smiley4.ktorswaggerui.dsl.routing.get
+import io.github.smiley4.ktorswaggerui.dsl.routing.post
+import io.ktor.client.request.request
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.application
+import io.ktor.server.routing.contentType
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
@@ -19,7 +24,11 @@ fun Route.imageRouting() {
     route("/images", {
         tags("images")
     }) {
-        get("/getImageByUserId/{userId}") {
+        get("/getImageByUserId/{userId}", {
+            request {
+                queryParameter<Long>("userId")
+            }
+        }) {
             val userId = call.parameters["userId"]!!.toLong()
             val imgUrl = imageService.getImageByUserId(userId)
             if (imgUrl != null) {
@@ -29,7 +38,11 @@ fun Route.imageRouting() {
             }
         }
 
-        get("/getImageById/{id}") {
+        get("/getImageById/{id}", {
+            request {
+                queryParameter<Long>("id")
+            }
+        }) {
             val id = call.parameters["id"]!!.toLong()
 
             val imgUrl = imageService.getImageLinkById(id)
@@ -40,7 +53,15 @@ fun Route.imageRouting() {
             }
         }
 
-        post("/uploadImageByUserId/{userId}") {
+        post("/uploadImageByUserId/{userId}", {
+            request {
+                queryParameter<Long>("userId")
+                multipartBody {
+                    mediaTypes(ContentType.Image.JPEG)
+                    part<ByteArray>("img")
+                }
+            }
+        }) {
             val img = call.receive<ByteArray>()
             val userId = call.parameters["userId"]!!.toLong()
             val imgId = imageService.uploadImageByUserId(img, userId)

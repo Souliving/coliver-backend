@@ -2,6 +2,7 @@ package coliver.routing.api.v1
 
 import coliver.dto.CreateHomeOwnerDto
 import coliver.services.HomeOwnerService
+import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.dsl.routing.post
 import io.github.smiley4.ktorswaggerui.dsl.routing.route
 import io.ktor.http.*
@@ -20,12 +21,20 @@ fun Route.homeOwnerRouting() {
             call.respond(homeOwnerService.getAll())
         }
 
-        get("/{id}") {
+        get("/{id}", {
+            request { 
+                queryParameter<Long>("id")
+            }
+        }) {
             val id = call.parameters["id"]?.toLong()!!
             call.respond(homeOwnerService.getById(id))
         }
 
-        get("/byHomeTypeId/{homeTypeId}") {
+        get("/byHomeTypeId/{homeTypeId}", {
+            request { 
+                queryParameter<Long>("homeTypeId")
+            }
+        }) {
             val id = call.parameters["homeTypeId"]?.toLong()!!
             call.respond(homeOwnerService.getByHomeTypes(id))
         }

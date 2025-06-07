@@ -1,6 +1,7 @@
 package coliver.routing.api.v1
 
 import coliver.services.CityService
+import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.dsl.routing.route
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -16,7 +17,11 @@ fun Route.cityRouting() {
             call.respond(cityService.getAll())
         }
 
-        get("/{id}") {
+        get("/{id}", {
+            request {
+                queryParameter<Long>("id")
+            }
+        }) {
             val id = call.parameters["id"]?.toLongOrNull()!!
             call.respond(cityService.getCityById(id))
         }
