@@ -23,10 +23,7 @@ fun Route.cityRouting() {
                 queryParameter<Long>("id")
             }
         }) {
-            val id = call.parameters["id"]?.toLongOrNull()!!
-        get("/{id}") {
-            val id = call.parameters["id"]?.toLongOrNull()
-                ?: return@get call.respond(HttpStatusCode.BadRequest)
+            val id = call.parameters["id"]?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
             call.respond(cityService.getCityById(id))
         }
     }

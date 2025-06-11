@@ -26,8 +26,6 @@ fun Route.homeOwnerRouting() {
                 queryParameter<Long>("id")
             }
         }) {
-            val id = call.parameters["id"]?.toLong()!!
-        get("/{id}") {
             val id = call.parameters["id"]?.toLong()
                 ?: return@get call.respond(HttpStatusCode.BadRequest)
             call.respond(homeOwnerService.getById(id))

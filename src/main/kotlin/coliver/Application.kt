@@ -8,11 +8,11 @@ fun main(args: Array<String>): Unit =
         .main(args)
 
 fun Application.module() {
+    configureAuthentication()
     configureSerialization()
     configureDatabases()
     configureKoin()
     configureMonitoring()
     configureRouting()
-    configureAuthentication()
     configureCORS()
 }
